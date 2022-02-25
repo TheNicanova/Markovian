@@ -28,5 +28,4 @@ class Wrapper(Layer):
     self.continuation
   
 
-class LangStaffLayer(Layer):
-  def continuation(self, 
+

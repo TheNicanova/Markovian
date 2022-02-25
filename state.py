@@ -2,6 +2,17 @@ import numpy as np
 import itertools
 
 class State:
-  def __init__(self, time, value):
+  """
+  Treated as an interface and storage.
+  """
+  def __init__(self, time, coord):
       self.time = time
-      self.value = value
+      self.coord = coord
+  def time(self):
+    return self.time
+
+  def coord(self):
+    return self.coord
+
+  
+
