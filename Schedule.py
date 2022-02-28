@@ -1,11 +1,8 @@
-
-""" Should probably inherit from array/list instead of doing this."""
-
-class Schedule:
+class Schedule(list):
   def __init__(self, *args):
         list.__init__(self, *args)
 
 
-class Schedules:
+class Schedules(list):
   def __init__(self, *args):
         list.__init__(self, *args)
