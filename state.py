@@ -8,11 +8,9 @@ class State:
   def __init__(self, time, coord):
       self.time = time
       self.coord = coord
-  def time(self):
+        
+  def get_time(self):
     return self.time
 
-  def coord(self):
+  def get_coord(self):
     return self.coord
-
-  
-
