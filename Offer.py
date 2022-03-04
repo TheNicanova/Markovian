@@ -1,4 +1,7 @@
 class Offer:
+  """
+  A function of state. The reward, or the value/amount offered.
+  """
   def __init__(self):
     pass
   
@@ -6,6 +9,9 @@ class Offer:
     pass
 
 class Call(Offer):
+  """
+  A call option
+  """
   def __init__(self,strikeprice):
     self.strike = strikeprice
   def amount(self, state):

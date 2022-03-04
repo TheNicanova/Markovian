@@ -19,8 +19,10 @@ class UnderlyingModel:
     pass
   def genesis(self):
     pass
-  def generatepath(self, initialstate = None, schedule = np.linspace(0,1,100)):
+  def generatepath(self, initialstate = None, schedule = None ):
     if initialstate is None: initialstate = self.genesis()
+    print(self.genesis())
+    if schedule is None: schedule = np.linspace(0, 1, 100)
     assert initialstate.get_time() == schedule[0]
 
     acc = [initialstate]
@@ -29,10 +31,10 @@ class UnderlyingModel:
         acc.append(newstate)
     return Path(acc)
 
-  def generatepaths(self, initialstate= None, schedules = None):
-      if schedules == None:
-        schedules = [np.linspace(0,1,100) for i in range(0,4)] # default generating 4 paths
-      return Paths([self.generatepath(initialstate, schedule) for schedule in schedules ])
+  def generatepaths(self, initialstate= None, schedules = None, n = 7):
+      if schedules is None:
+        schedules = [Schedule(np.linspace(0,1,100)) for i in range(0,n)] # default generating 7 paths
+      return Paths([self.generatepath(initialstate, schedule) for schedule in schedules])
 
 class GeometricBrownianMotion(UnderlyingModel):
   """

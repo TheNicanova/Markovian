@@ -45,8 +45,8 @@ class PPath(Path):
 class PPaths(Paths):
     def plot(self):
         fig, ax = plt.subplots()
-        for ppath in self:
-            PPath(ppath).plotter(ax)
+        for path in self:
+            PPath(path).plotter(ax)
 
 
 
