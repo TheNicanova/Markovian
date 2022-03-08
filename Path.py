@@ -12,11 +12,28 @@ class Path(np.ndarray):
     def __array_finalize__(self, obj):
         pass
 
+    def get_time(self):
+        return np.array([state.get_time() for state in self])
+
+    def get_coord(self):
+        return np.array([state.get_coord() for state in self])
+
+
+    def get_schedule_coord(self):
+        return (self.get_time(), self.get_coord())
+
 class Paths(list):
     """
     Paths is just a list of paths
     """
-    pass
+    def get_coord(self):
+        return np.array([path.get_coord() for path in self])
+
+    def get_time(self):
+        return np.array([path.get_time() for path in self])
+
+    def get_schedule_coord(self):
+        return (self.get_time(), self.get_coord())
 
 class PPath(Path):
     """

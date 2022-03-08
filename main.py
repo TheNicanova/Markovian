@@ -7,12 +7,11 @@ from UnderlyingModel import *
 from Path import *
 
 um = GeometricBrownianMotion()
-path = um.generatepath()
+path = um.generate_path()
 ppath = PPath(path)
 
-paths = um.generatepaths()
-ppaths = PPaths(paths)
+paths = um.generate_paths()
+schedules, coords = paths.get_schedule_coord()
 
-paths = um.generatepaths(initialstate=State(0.0,5.0),n=7)
-ppaths = PPaths(paths)
-ppaths.plot()
+
+paths = um.generate_paths(initialstate=State(0.0,5.0),n=19)

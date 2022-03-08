@@ -8,7 +8,7 @@ class State:
   def __init__(self, time, coord):
       self.time = time
       self.coord = coord
-        
+
   def get_time(self):
     return self.time
 
