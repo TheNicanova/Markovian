@@ -6,6 +6,10 @@ class Path(list):
     Path is a list of states.
     '''
 
+    def __init__(self, args):
+        super().__init__(args)
+        self.length = len(self)
+
     def get_time(self):
         """
         Returns a numpy array created from the list of timestamps
@@ -34,17 +38,31 @@ class Path(list):
         fig, ax = plt.subplots()
         self.plotter(ax)
 
+    def get_length(self):
+        return self.length
+
+
 class Paths(list):
     """
     Paths is simply a list of paths
     """
+    def __init__(self, args):
+        super().__init__(args)
+        self.memoed_schedules = None
+        self.memoed_coords = None
+        self.length = self[0].get_length()
+
     def get_coord(self): # returns a numpy matrix A where A_ij is the ith coord for the jth path
-        matrix = np.array([path.get_coord() for path in self]).transpose()
-        return matrix.copy() # So that we don't get a view
+        if self.memoed_coords is None: # Compute and store an efficient representation
+            matrix = np.array([path.get_coord() for path in self]).transpose() # This is the efficient representation
+            self.memoed_coords = matrix.copy()  # So that we don't get a view
+        return self.memoed_coords # Retrieve the result
 
     def get_time(self): # returns a numpy matrix A where A_ij is the ith timestamp for the jth path
-        matrix = np.array([path.get_time() for path in self]).transpose()
-        return matrix.copy() # So that we don't get a view
+        if self.memoed_schedules is None:
+            matrix = np.array([path.get_time() for path in self]).transpose()
+            self.memoed_schedules = matrix.copy()
+        return self.memoed_schedules # So that we don't get a view
 
     def get_time_coord(self):
         return (self.get_time(), self.get_coord())
@@ -53,3 +71,6 @@ class Paths(list):
         fig, ax = plt.subplots()
         for path in self:
             path.plotter(ax)
+
+    def get_length(self):
+        return self.length

@@ -1,43 +1,25 @@
 from UnderlyingModel.UnderlyingGenerator import *
 from UnderlyingModel.State import *
+from Offer import *
+from Regression import *
+from Layer import *
+from Model import *
 
 um = GeometricBrownianMotion()
 
-path = um.generate_path()
 paths = um.generate_paths()
-# paths = um.generate_paths(initial_state=State(0.0, 5.0), n=19)
-
-schedule, coord = path.get_time_coord()
-schedules, coords = paths.get_time_coord()
-
-
-from Offer import *
-
 mycall = Call(1.1)
-mycall.payoff(3,4)
+mymodel = LangStaff()
 
-
-from Regression import *
-
-mypolyreg = PolynomialRegression()
-p = mypolyreg.fit(schedule, coord)
-
-plt.plot(schedule, p(schedule))
-path.plot()
-
-
-from Data import *
-
-mydata = Data(schedules, coords, mycall.payoff)
-
-from Layer import *
+payload, token = mymodel.train(paths, mycall)
 
 
 
-myinitlayer = LangstaffInitial()
-mylayer = LangstaffLayer()
+# Short term
+# TODO: Plot the continuation function of the trained model.
+# TODO: Plotter function for Token and for payload
+# TODO: Make sure the number of paths and the length of the model is the same
 
-myinitlayer.update(mydata)
-mylayer.update(mydata)
+# Long term
+# TODO: Testing if we observe "early stopping" in the case of a call.
 
-paths.plot()
