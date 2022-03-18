@@ -1,20 +1,3 @@
-from UnderlyingModel.UnderlyingGenerator import *
-from UnderlyingModel.State import *
-from Offer import *
-from Regression import *
-from Layer import *
-from Model import *
-
-um = GeometricBrownianMotion()
-
-paths = um.generate_paths()
-mycall = Call(1.1)
-mymodel = LangStaff()
-
-payload, token = mymodel.train(paths, mycall)
-
-
-
 # Short term
 # TODO: Plot the continuation function of the trained model.
 # TODO: Plotter function for Token and for payload
@@ -22,4 +5,23 @@ payload, token = mymodel.train(paths, mycall)
 
 # Long term
 # TODO: Testing if we observe "early stopping" in the case of a call.
+
+from Offer import *
+from UnderlyingModel.UnderlyingGenerator import *
+from Token import *
+from Model import *
+
+um = GeometricBrownianMotion()
+call = Call()
+
+path = um.generate_path()
+paths = um.generate_paths()
+
+model = LangStaff()
+
+token = model.train(paths, call)
+token.plot()
+
+token.plot3D()
+
 

@@ -26,26 +26,38 @@ class LangStaffInitial(LangStaffAbstract):
     def update(self, token):
         token.continuation[token.cursor] = 0.0
 
+        continuation_model = lambda x: x * 0 # trick needed for broadcasting to work
+
         token.policy[token.cursor] = True
 
         token.value[token.cursor] = token.offers[token.cursor]
 
-        surface = token.offer.payoff
+        token.layer_payload[token.cursor] = continuation_model
 
-        return surface
 
 class LangStaffLayer(LangStaffAbstract):
 
+# TODO: change token.coord[token.cursor] into token.get_current_coords()
     def update(self, token):
         token.continuation[token.cursor] = token.value[token.get_precedent_cursor()]
 
-        surface = self.regression_model.fit(token.coords[token.cursor], token.continuation[token.cursor])
+        continuation_model = self.regression_model.fit(token.coords[token.cursor], token.continuation[token.cursor])
 
-        token.policy[token.cursor] = token.offers[token.cursor] > surface(token.coords[token.cursor])
+        continuation_model_evaluated = continuation_model(token.coords[token.cursor])
+
+        token.policy[token.cursor] = token.offers[token.cursor] > continuation_model_evaluated
 
         token.value[token.cursor] = token.policy[token.cursor] * token.offers[token.cursor] \
-                                  + np.logical_not(token.policy[token.cursor]) * token.continuation[token.cursor]
-        return surface
+                                    + np.logical_not(token.policy[token.cursor]) * token.continuation[token.cursor]
+
+        token.layer_payload[token.cursor] = continuation_model
+
 
 class LangStaffTerminal(LangStaffAbstract):
+    def update(self, token):
+        token.continuation[token.cursor] = np.average(token.value[token.get_precedent_cursor()])
+        token.policy[token.cursor] = token.offers[token.cursor] > token.continuation[token.cursor]
+        token.value[token.cursor] = np.maximum(token.continuation[token.cursor], token.offers[token.cursor])
+        # no payload
+
     pass

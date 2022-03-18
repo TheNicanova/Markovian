@@ -34,9 +34,27 @@ class Path(list):
         y = self.get_coord()
         ax.plot(x, y)
 
-    def plot(self):
+    def plot(self, offer):
         fig, ax = plt.subplots()
-        self.plotter(ax)
+        self.plotter(ax, offer)
+
+    def plotter3D(self, ax, offer=None):
+
+        x = self.get_time()
+        y = self.get_coord()
+
+        if offer is None:
+            z = 0
+        else:
+            z = offer.payoff(x, y)
+
+        ax.plot(x, y, z)
+
+    def plot3D(self, offer):
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        self.plotter3D(ax, offer)
+
 
     def get_length(self):
         return self.length
@@ -71,6 +89,16 @@ class Paths(list):
         fig, ax = plt.subplots()
         for path in self:
             path.plotter(ax)
+
+    def plotter3D(self, ax, offer):
+        for path in self:
+            path.plotter3D(ax, offer)
+
+
+    def plot3D(self, offer = None):
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        self.plotter3D(ax, offer)
 
     def get_length(self):
         return self.length

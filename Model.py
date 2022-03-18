@@ -1,25 +1,25 @@
 from Token import *
 from Layer import *
 
+
 class Model:
 
     def get_token(self, paths, offer):
         pass
 
-
-    def get_layer(self, paths, offer = None):
+    def get_layer(self, paths, offer=None):
         pass
 
     def train(self, paths, offer):
         layers = self.get_layer(paths, offer)
         token = self.get_token(paths, offer)
 
-        payload = []
+        # payload = []
 
         for layer in layers:
-            payload.append(layer.update(token))
+            layer.update(token)
             token.update_cursor()
-        return payload, token
+        return token
 
 
 class LangStaff(Model):
@@ -28,9 +28,7 @@ class LangStaff(Model):
     def get_token(self, paths, offer):
         return LangStaffToken(paths, offer)
 
-    def get_layer(self, paths, offer = None):
+    def get_layer(self, paths, offer=None):
         n = paths.get_length()
-        layers = [LangStaffInitial(), * LangStaffLayer.wrap(n-2), LangStaffTerminal()]
+        layers = [LangStaffInitial(), *LangStaffLayer.wrap(n - 2), LangStaffTerminal()]
         return layers
-
-
