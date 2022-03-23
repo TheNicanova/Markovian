@@ -1,8 +1,8 @@
 
 default = {
     "num_of_paths": 17,
-    "num_of_timestamps": 11,
-    "degree": 2,
+    "num_of_timestamps": 5,
+    "degree": 1,
 
     "initial_time": 0,
     "terminal_time": 10,

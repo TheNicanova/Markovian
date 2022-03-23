@@ -66,8 +66,7 @@ class GeometricBrownianMotion(UnderlyingGenerator):
     """
         dt = forward_time - initial_state.get_time()
         assert dt >= 0  # Making sure we are asked to generate a state at a later time than the initial state
-        updated_coord = initial_state.get_coord() * np.exp((
-                                                                       self.rate - self.dividend - self.sigma ** 2.0 / 2.0) * dt + self.sigma * dt ** 0.5 * self.rng.standard_normal())
+        updated_coord = initial_state.get_coord() * np.exp((self.rate - self.dividend - self.sigma ** 2.0 / 2.0) * dt + self.sigma * dt ** 0.5 * self.rng.standard_normal())
 
         return State(forward_time, updated_coord)
 
