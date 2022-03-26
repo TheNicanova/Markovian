@@ -2,17 +2,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 from config import *
 
+
 class Token:
 
     def __init__(self, paths, offer):
         self.paths = paths  # Storing the paths given
         self.offer = offer  # Storing the pay_off model used
 
+        self.layer_payload = [None] * self.paths.get_length()
+
         self.schedules = paths.get_time()
         self.coords = paths.get_coord()
         self.offers = offer.payoff(self.schedules, self.coords)
         self.length = paths.get_length()
-        self.layer_payload = [None] * self.coords.shape[0]
 
         self.min_coord = np.min(self.coords)
         self.max_coord = np.max(self.coords)
@@ -116,3 +118,15 @@ class LangStaffToken(Token):
             for i in range(0,self.length- 2):
                 self.plotter(axs[i], i+1)
                 i += 1
+
+# Todo: Have path/data do the init for continuation, value, by means of "copy"
+    class LatticeToken(Token):
+        def __init__(self, paths, offer):
+            super().__init__(paths, offer)
+            self.layer_payload = [None] * self.paths.get_length()
+            self.policy = [None] * self.paths.get_length()
+            self.continuation = [None] * self.paths.get_length()
+            self.value = [None] * self.paths.get_length()
+            self.cursor = self.length - 1
+
+

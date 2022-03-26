@@ -6,3 +6,4 @@ d* self.cursor = coords.shape[1] - 1 is potentially a problem (as the numbers go
 * Add a check to see whether all point are the same.
 * Must track what relies on numpy broadcasting (e.g. lambda expression)
 * Cursor change name to teleporter?
+* Plotting node is plotting too many times

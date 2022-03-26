@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import functools
 
 class Path(list):
     '''
@@ -102,3 +103,18 @@ class Paths(list):
 
     def get_length(self):
         return self.length
+
+#TODO: Use the proper memoization
+class Lattice(Path):
+
+    def get_coord(self):
+        return [np.array([node.get_state().get_coord() for node in layer]) for layer in self]
+
+    def get_time(self):
+        return [np.array([node.get_state().get_time() for node in layer]) for layer in self]
+
+    def plotter(self, ax, node):
+        for child in node.children:
+            ax.plot([node.get_state().get_coord(), child.get_state().get_coord()], [node.get_state().get_time(), child.get_state().coord.get_time()])
+
+

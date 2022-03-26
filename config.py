@@ -8,6 +8,7 @@ default = {
     "terminal_time": 10,
 
     "call_strike": 1.3,
+    "put_strike": 0.8,
 
     # Plotting
     "time_resolution_continuation": 100,

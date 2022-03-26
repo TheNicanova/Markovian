@@ -3,7 +3,6 @@ import Token
 
 from Regression import *
 
-
 class Layer:
 
     def update(self, token):
@@ -61,3 +60,28 @@ class LangStaffTerminal(LangStaffAbstract):
         # no payload
 
     pass
+
+
+class BinomialInitial(Layer):
+    def update(self, token):
+        token.continuation[token.cursor] = 0.0
+
+        token.policy[token.cursor] = True
+
+        token.value[token.cursor] = token.offers[token.cursor]
+
+
+class Binomial(Layer):
+    def update(self, token):
+        token.continuation[token.cursor] = token.value[token.get_precedent_cursor()]
+
+        continuation_model = self.regression_model.fit(token.coords[token.cursor], token.continuation[token.cursor])
+
+        continuation_model_evaluated = continuation_model(token.coords[token.cursor])
+
+        token.policy[token.cursor] = token.offers[token.cursor] > continuation_model_evaluated
+
+        token.value[token.cursor] = token.policy[token.cursor] * token.offers[token.cursor] \
+                                    + np.logical_not(token.policy[token.cursor]) * token.continuation[token.cursor]
+
+        token.layer_payload[token.cursor] = continuation_model
