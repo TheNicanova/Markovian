@@ -45,7 +45,9 @@ class UnderlyingGenerator:
         return node
 
     def generate_children(self, node, forward_time, n=default["num_of_paths"]):
-        if node.children is None: node.children = []
+
+        assert n > 0
+
         for _ in range(n):
             node.children.append(Node(self.forward_to(node.get_state(), forward_time)))
         return node
@@ -58,6 +60,7 @@ class UnderlyingGenerator:
 
         # Making sure the beginning of the schedule matches with the initial state
         assert node.get_state().get_time() == schedule[0]
+        assert n > 0
 
         self.generate_children(node, schedule[1], n)
 
@@ -105,6 +108,7 @@ class GeometricBrownianMotion(UnderlyingGenerator):
         # Making sure the beginning of the schedule matches with the initial node
         assert node.get_state().get_time() == schedule[0]
 
+        root = node
         lattice = []
 
         # lattice is a list of list
@@ -141,4 +145,4 @@ class GeometricBrownianMotion(UnderlyingGenerator):
                 current_layer[i].set_children([lower_child, higher_child])
 
             lattice.append(next_layer)
-        return Lattice(lattice)
+        return root

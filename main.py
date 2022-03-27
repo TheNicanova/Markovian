@@ -1,9 +1,11 @@
 from UnderlyingModel.UnderlyingGenerator import *
 
 um = GeometricBrownianMotion()
-node = um.generate_path()
-node = um.generate_paths()
-some = um.generate_lattice()
+#node = um.generate_paths()
+node = um.generate_lattice()
+layers = node.bfs()
+
+
 
 
 mylattice = um.generate_lattice()
