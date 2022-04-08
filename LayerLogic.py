@@ -1,5 +1,5 @@
 from Regression import *
-from NodeOperation import *
+from NodeLogic import *
 
 
 class LayerOperation:
@@ -70,14 +70,14 @@ class RegressionContinuationLayerOp(LayerOperation):
 
         if self.regression_model.is_fittable(coord_list, target_list):
             continuation_model = self.regression_model.fit(coord_list, target_list)
-            layer.regression_result = continuation_model
+            layer.set_regression_result(continuation_model)
             for node in layer:
                 continuation_model_evaluated = continuation_model(node.get_coord())
-                node.pricing_data.regression = continuation_model_evaluated
+                node.set_regression(continuation_model_evaluated)
         else:
             for node in layer:
-                layer.regression_result = None
-                node.pricing_data.regression = node.pricing_data.get_continuation()
+                layer.set_regression_result(None)
+                node.set_regression(node.get_continuation())
 
 
 class LangStaffLayerOp(LayerOperation):

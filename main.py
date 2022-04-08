@@ -1,5 +1,6 @@
 from UnderlyingGenerator import *
 from Offer import *
+from PricingModel import *
 
 um = GeometricBrownianMotion()
 root = um.generate_lattice()

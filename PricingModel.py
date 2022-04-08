@@ -1,5 +1,5 @@
-from LayerPricingData import LayerPricingData
-from LayerOperation import *
+from LayerData import *
+from LayerLogic import *
 
 
 class PricingModel:
@@ -13,7 +13,7 @@ class PricingModel:
         # initialize all the layer_data
         self.layer_data_list = []
         for node_list in self.node_partition:
-            self.layer_data_list.append(LayerPricingData(node_list))
+            self.layer_data_list.append(LayerData(node_list))
 
         # initialize all the nodes
         for layer in self.layer_data_list:
@@ -21,7 +21,7 @@ class PricingModel:
                 NodeOperation.init_node(node, offer_fun)
 
     def get_root_value(self):
-        return self.root.pricing_data.get_value()
+        return self.root.get_value()
 
 
     def train(self):

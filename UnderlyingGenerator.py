@@ -1,5 +1,6 @@
 from State import *
 from Node import *
+from NodeData import *
 from config import *
 import numpy as np
 
@@ -11,6 +12,9 @@ class UnderlyingGenerator:
   forward_to(state,forward_time) : expects a state object and a future time; returns a state object sampled at the future time.
 
   """
+    @classmethod
+    def new_node(cls, state):
+        return Node(state)
 
     def __init__(self):
         pass
@@ -25,7 +29,7 @@ class UnderlyingGenerator:
         return np.linspace(default["initial_time"], default["terminal_time"], default["num_of_timestamps"])
 
     def get_default_node(self):
-        return Node(self.genesis())
+        return self.new_node(self.genesis())
 
     def generate_path(self, node=None, schedule=None):
 
@@ -38,7 +42,7 @@ class UnderlyingGenerator:
 
         acc = node
         for i in range(1, len(schedule)):
-            acc.children = [Node(self.forward_to(acc.get_state(), schedule[i]))]
+            acc.children = [self.new_node(self.forward_to(acc.get_state(), schedule[i]))]
             acc = acc.children[0]
         return node
 
@@ -46,8 +50,10 @@ class UnderlyingGenerator:
 
         assert n > 0
 
-        for _ in range(n):
-            node.children.append(Node(self.forward_to(node.get_state(), forward_time)))
+        children = node.get_children()
+        new_children = [self.new_node(self.forward_to(node.get_state(), forward_time)) for _ in range(n)]
+        node.set_children(children + new_children)
+
         return node
 
     def generate_paths(self, node=None, schedule=None, n=default["num_of_paths"]):
@@ -63,7 +69,7 @@ class UnderlyingGenerator:
         self.generate_children(node, schedule[1], n)
 
         # Setting defaults
-        for child in node.children:
+        for child in node.get_children():
             self.generate_path(child, schedule[1:])
         return node
 
@@ -72,6 +78,10 @@ class GeometricBrownianMotion(UnderlyingGenerator):
     """
   A concrete class of Underlying model.
   """
+
+    @classmethod
+    def new_node(cls, state):
+        return NodeData(state)
 
     def __init__(self, rate=0.06, sigma=0.2, dividend=0):
         # To be modularized ...
@@ -104,7 +114,7 @@ class GeometricBrownianMotion(UnderlyingGenerator):
         if schedule is None: schedule = self.get_default_schedule()
 
         # Making sure the beginning of the schedule matches with the initial node
-        assert node.get_state().get_time() == schedule[0]
+        assert node.get_time() == schedule[0]
 
         root = node
         lattice = []
@@ -128,12 +138,12 @@ class GeometricBrownianMotion(UnderlyingGenerator):
 
             # Populating next layer
             next_lowest_node_coord = current_layer[0].get_state().get_coord() * d
-            next_lowest_node = Node(State(timestamp, next_lowest_node_coord))
+            next_lowest_node = self.new_node(State(timestamp, next_lowest_node_coord))
             next_layer.append(next_lowest_node)
 
             for node in current_layer:
-                next_higher_node_coord = node.get_state().get_coord() * u
-                next_higher_node = Node(State(timestamp, next_higher_node_coord))
+                next_higher_node_coord = node.get_coord() * u
+                next_higher_node = self.new_node(State(timestamp, next_higher_node_coord))
                 next_layer.append(next_higher_node)
 
             # Connecting current layer to next layerù

@@ -5,24 +5,33 @@ class Node:
 
     def __init__(self, state, children=None):
 
-        self.children = []
-        self.state = state
-        self.data = None # Will be instantiated when creating a NodeData
+        self._state = state
+        self._children = []
 
-    def get_children(self):
-        return self.children
-
-    def set_children(self, children):
-        self.children = children
-
-    def get_state(self):
-        return self.state
-
-    def get_coord(self):
-        return self.get_state().get_coord()
+    # <Getters>
 
     def get_time(self):
-        return self.get_state().get_time()
+        return self._state.get_time()
+
+    def get_coord(self):
+        return self._state.get_coord()
+
+    def get_state(self):
+        return self._state
+
+    def get_children(self):
+        return self._children
+
+    # </Getters>
+
+
+    # <Setters>
+
+    def set_children(self, children):
+        self._children = children
+
+    # </Setters>
+
 
     def bfs(self):
 
