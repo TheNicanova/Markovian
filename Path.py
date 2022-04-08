@@ -116,5 +116,3 @@ class Lattice(Path):
     def plotter(self, ax, node):
         for child in node.children:
             ax.plot([node.get_state().get_coord(), child.get_state().get_coord()], [node.get_state().get_time(), child.get_state().coord.get_time()])
-
-

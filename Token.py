@@ -3,7 +3,14 @@ import matplotlib.pyplot as plt
 from config import *
 
 
-class Token:
+class AbstractDataContainer:
+    def get_continuation(self, cursor):
+        pass
+
+    def get_offer(self, cursor):
+
+
+class DataContainer(AbstractDataContainer):
 
     def __init__(self, paths, offer):
         self.paths = paths  # Storing the paths given

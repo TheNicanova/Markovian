@@ -1,8 +1,5 @@
-import numpy as np
-import Token
-
-from Regression import *
-
+from PricingModel.Regression import *
+# what introspeection should a Layer have? A layer is a collection of nodes.
 class Layer:
 
     def update(self, token):

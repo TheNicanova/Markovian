@@ -10,6 +10,7 @@ class Model:
     def get_layer(self, paths, offer=None):
         pass
 
+
     def train(self, paths, offer):
         layers = self.get_layer(paths, offer)
         token = self.get_token(paths, offer)

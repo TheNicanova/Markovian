@@ -11,7 +11,7 @@ class Offer:
         pass
 
     def payoff(self, time, coord):
-        return max(0, coord - self.strike_price)
+        pass
 
     def payoff_state(self, state):
         return self.payoff(state.get_time(), state.get_coord())
@@ -34,6 +34,7 @@ class Call(Offer):
 
     def payoff_state(self, state):
         return self.payoff(state.get_time(), state.get_coord())
+
 
 
 class Put(Offer):
