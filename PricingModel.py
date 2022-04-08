@@ -1,5 +1,5 @@
-from PricingModel.Data.LayerPricingData import LayerPricingData
-from PricingModel.Logic.LayerOperation import *
+from LayerPricingData import LayerPricingData
+from LayerOperation import *
 
 
 class PricingModel:

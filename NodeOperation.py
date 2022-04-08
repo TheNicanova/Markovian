@@ -1,5 +1,5 @@
 import numpy as np
-from PricingModel.Data.NodePricingData import NodePricingData
+from NodeData import NodePricingData
 
 
 class NodeOperation:

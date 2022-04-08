@@ -1,4 +1,4 @@
-from PricingModel.Regression import *
+from Regression import *
 # what introspeection should a Layer have? A layer is a collection of nodes.
 class Layer:
 

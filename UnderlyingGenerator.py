@@ -1,7 +1,5 @@
-from UnderlyingModel.State import *
-from UnderlyingModel.Path import *
-from UnderlyingModel.Node import *
-from UnderlyingModel.Schedule import *
+from State import *
+from Node import *
 from config import *
 import numpy as np
 

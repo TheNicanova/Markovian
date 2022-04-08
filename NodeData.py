@@ -1,20 +1,23 @@
-class NodeData:
+from .Node import *
+
+class NodeData(Node):
     """
     Usage: this is an object that holds a node and the data needed for the node logic. It is important (for debugging)
     """
 
-    def __init__(self, continuation=None, policy=None, value=None, offer=None):
 
-        self.node =
+    def __init__(self, node):
 
+        self.node = node
 
+        # Must be accessed through getter/setter
         self.continuation = None
         self.policy = None
         self.value = None
         self.offer = None
         self.regression = None
 
-    # **********  <Reading to the "database"> *************
+    # **********  <Reading from the "database"> *************
     def get_regression(self):
         return self.regression
 
@@ -30,7 +33,7 @@ class NodeData:
     def get_offer(self):
         return self.offer
 
-    # **********  </Reading to the "database"> *************
+    # **********  </Reading from the "database"> *************
 
     # **********  <Writing to the "database"> *************
     def set_continuation(self, arg):
@@ -48,3 +51,6 @@ class NodeData:
     def set_regression(self, arg):
         self.regression = arg
     # **********  </Writing to the "database"> *************
+
+
+

@@ -1,5 +1,5 @@
-from PricingModel.Regression import *
-from PricingModel.Logic.NodeOperation import *
+from Regression import *
+from NodeOperation import *
 
 
 class LayerOperation:

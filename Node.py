@@ -7,6 +7,7 @@ class Node:
 
         self.children = []
         self.state = state
+        self.data = None # Will be instantiated when creating a NodeData
 
     def get_children(self):
         return self.children
