@@ -7,7 +7,7 @@ class PricingModel:
     def __init__(self, root, offer_fun):
         self.root = root
         self.node_partition = root.bfs()
-        self.node_partition.reverse() # slow and in place
+        self.node_partition.reverse()  # slow and in place
         self.layer_op_list = []
 
         # initialize all the layer_data
@@ -22,7 +22,6 @@ class PricingModel:
 
     def get_root_value(self):
         return self.root.get_value()
-
 
     def train(self):
         for i in range(len(self.layer_data_list)):

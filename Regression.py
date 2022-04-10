@@ -8,7 +8,7 @@ class Regression():
     def __init__(self, param=default["degree"]):
         self.param = param
 
-    def fit(self, coord, offer_model):
+    def fit(self, coord, targets):
         pass
 
 
@@ -19,7 +19,5 @@ class PolynomialRegression(Regression):
         return lambda x: np.maximum(0, p(x))
 
     def is_fittable(self, coord, targets):
-        if len(coord) > self.param:
-            return True
-        else:
-            return False
+        return len(coord) > self.param
+

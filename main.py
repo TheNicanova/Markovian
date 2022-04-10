@@ -1,16 +1,17 @@
-from UnderlyingGenerator import *
-from Offer import *
-from PricingModel import *
+import UnderlyingGenerator
+import Option
+import PricingModel
 
-um = GeometricBrownianMotion()
+# 1. Get some data.
+um = UnderlyingGenerator.GeometricBrownianMotion()
 root = um.generate_lattice()
-root2 = um.generate_paths()
 
-call = Call(0.3)
+# 2. Get an objective function.
+call = Option.Call(0.3)
 
-my_model = LangStaff(root, call)
+# 3. Get a pricing model and train it.
+root = PricingModel.LangStaff(root, call).train()
 
-my_model.train()
-a = my_model.get_root_value()
 
+# 4. Consume the result
 root.plot_descendant()

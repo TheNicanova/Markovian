@@ -24,14 +24,12 @@ class Node:
 
     # </Getters>
 
-
     # <Setters>
 
     def set_children(self, children):
         self._children = children
 
     # </Setters>
-
 
     def bfs(self):
 

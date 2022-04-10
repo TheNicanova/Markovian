@@ -6,7 +6,7 @@ class NodeOperation:
     def update(self, node):
         pass
 
-    # TODO: find a principled way to initialize the and layer_data
+    # TODO: find a principled way to initialize the NodeData and layer_data
 
     @classmethod
     def init_node(cls, node, offer_obj):
@@ -21,7 +21,6 @@ class ContinuationOp(NodeOperation):
         else:
             continuation = 0
         node.set_continuation(continuation)
-        return continuation
 
 
 class ValueOp(NodeOperation):
@@ -33,12 +32,12 @@ class ValueOp(NodeOperation):
             value = node.get_offer()
 
         node.set_value(value)
-        return value
 
 
 class LogLikelihoodOp(NodeOperation):
     def __init__(self, p):
         self.p = p
+
 
 class RegressionValueOp(NodeOperation):
     def update(self, node):
@@ -46,9 +45,7 @@ class RegressionValueOp(NodeOperation):
             value = node.get_continuation()
             node.set_value(value)
         else:
-            value = ValueOp().update(node)
-
-        return value
+            ValueOp().update(node)
 
 
 class RegressionPolicyOp(NodeOperation):
@@ -60,7 +57,6 @@ class RegressionPolicyOp(NodeOperation):
             policy = True
 
         node.set_policy(policy)
-        return policy
 
 
 class PolicyOp(NodeOperation):
@@ -71,4 +67,3 @@ class PolicyOp(NodeOperation):
             policy = True
 
         node.set_policy(policy)
-        return policy

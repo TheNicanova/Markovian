@@ -2,7 +2,7 @@ import numpy as np
 from config import *
 
 
-class Offer:
+class Option:
     """
   A function of state. The reward, or the value/amount offered.
   """
@@ -17,7 +17,7 @@ class Offer:
         return self.payoff(state.get_time(), state.get_coord())
 
 
-class Call(Offer):
+class Call(Option):
     """
   A call option
   """
@@ -32,12 +32,8 @@ class Call(Offer):
     def payoff(self, time, coord):
         return np.maximum(0, coord - self.strike_price)
 
-    def payoff_state(self, state):
-        return self.payoff(state.get_time(), state.get_coord())
 
-
-
-class Put(Offer):
+class Put(Option):
     """
     A put option
     """
@@ -51,6 +47,3 @@ class Put(Offer):
 
     def payoff(self, time, coord):
         return np.maximum(0, self.strike_price - coord)
-
-    def payoff_state(self, state):
-        return self.payoff(state.get_time(), state.get_coord())

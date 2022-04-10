@@ -12,9 +12,14 @@ class UnderlyingGenerator:
   forward_to(state,forward_time) : expects a state object and a future time; returns a state object sampled at the future time.
 
   """
+
     @classmethod
     def new_node(cls, state):
         return Node(state)
+
+    @classmethod
+    def get_default_schedule(self):
+        return np.linspace(default["initial_time"], default["terminal_time"], default["num_of_timestamps"])
 
     def __init__(self):
         pass
@@ -24,9 +29,6 @@ class UnderlyingGenerator:
 
     def genesis(self):
         pass
-
-    def get_default_schedule(self):
-        return np.linspace(default["initial_time"], default["terminal_time"], default["num_of_timestamps"])
 
     def get_default_node(self):
         return self.new_node(self.genesis())
@@ -99,7 +101,7 @@ class GeometricBrownianMotion(UnderlyingGenerator):
         dt = forward_time - initial_state.get_time()
         assert dt >= 0  # Making sure we are asked to generate a state at a later time than the initial state
         updated_coord = initial_state.get_coord() * np.exp((
-                                                                       self.rate - self.dividend - self.sigma ** 2.0 / 2.0) * dt + self.sigma * dt ** 0.5 * self.rng.standard_normal())
+                                                                   self.rate - self.dividend - self.sigma ** 2.0 / 2.0) * dt + self.sigma * dt ** 0.5 * self.rng.standard_normal())
 
         return State(forward_time, updated_coord)
 
@@ -154,3 +156,12 @@ class GeometricBrownianMotion(UnderlyingGenerator):
 
             lattice.append(next_layer)
         return root
+
+
+class BrownianMotion(UnderlyingGenerator):
+
+    def forward_to(self, state, forward_time):
+        pass
+
+    def genesis(self):
+        pass
