@@ -1,5 +1,5 @@
-from Regression import *
-from NodeLogic import *
+from Utility.Regression import *
+from Logic.NodeLogic import *
 
 
 class LayerOperation:

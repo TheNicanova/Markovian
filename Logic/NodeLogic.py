@@ -1,20 +1,13 @@
 import numpy as np
-from NodeData import *
 
 
-class NodeOperation:
+class NodeLogic:
     def update(self, node):
         pass
 
-    # TODO: find a principled way to initialize the NodeData and layer_data
-
-    @classmethod
-    def init_node(cls, node, offer_obj):
-        offer_payoff = offer_obj.payoff_state(node.get_state())
-        node.set_offer(offer_payoff)
 
 
-class ContinuationOp(NodeOperation):
+class ContinuationOp(NodeLogic):
     def update(self, node):
         if node.get_children():
             continuation = np.average([child.get_value() for child in node.get_children()])
@@ -23,7 +16,7 @@ class ContinuationOp(NodeOperation):
         node.set_continuation(continuation)
 
 
-class ValueOp(NodeOperation):
+class ValueOp(NodeLogic):
     def update(self, node):
         if node.get_children():
             # TODO: warning message
@@ -34,12 +27,12 @@ class ValueOp(NodeOperation):
         node.set_value(value)
 
 
-class LogLikelihoodOp(NodeOperation):
+class LogLikelihoodOp(NodeLogic):
     def __init__(self, p):
         self.p = p
 
 
-class RegressionValueOp(NodeOperation):
+class RegressionValueOp(NodeLogic):
     def update(self, node):
         if node.get_policy() is False:
             value = node.get_continuation()
@@ -48,7 +41,7 @@ class RegressionValueOp(NodeOperation):
             ValueOp().update(node)
 
 
-class RegressionPolicyOp(NodeOperation):
+class RegressionPolicyOp(NodeLogic):
 
     def update(self, node):
         if node.get_children():
@@ -59,7 +52,7 @@ class RegressionPolicyOp(NodeOperation):
         node.set_policy(policy)
 
 
-class PolicyOp(NodeOperation):
+class PolicyOp(NodeLogic):
     def update(self, node):
         if node.get_children():
             policy = node.get_offer() > node.get_continuation()

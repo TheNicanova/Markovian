@@ -1,4 +1,4 @@
-from Node import *
+from Structure.Node import *
 
 
 class NodeData(Node):
@@ -18,6 +18,10 @@ class NodeData(Node):
 
         # Generator Data
 
+    @classmethod
+    def init_node_data(cls, node, option):
+        option_payoff = option.payoff_state(node.get_state())
+        node.set_offer(option_payoff)
 
 
     # **********  <Reading from the "database"> *************

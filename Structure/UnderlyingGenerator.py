@@ -1,6 +1,5 @@
-from State import *
-from Node import *
-from NodeData import *
+from Structure.State import *
+from Structure.NodeData import *
 from config import *
 import numpy as np
 
@@ -15,7 +14,7 @@ class UnderlyingGenerator:
 
     @classmethod
     def new_node(cls, state):
-        return Node(state)
+        return NodeData(state)
 
     @classmethod
     def get_default_schedule(self):
@@ -81,11 +80,8 @@ class GeometricBrownianMotion(UnderlyingGenerator):
   A concrete class of Underlying model.
   """
 
-    @classmethod
-    def new_node(cls, state):
-        return NodeData(state)
-
     def __init__(self, rate=0.06, sigma=0.2, dividend=0):
+        super().__init__()
         # To be modularized ...
         self.name = "Geometric Brownian Motion"
         self.rate = rate

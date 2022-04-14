@@ -3,6 +3,7 @@ class LayerData(list):
 
     def __init__(self, arg):
         super().__init__(arg)
+
         self._regression_result = None
 
 
