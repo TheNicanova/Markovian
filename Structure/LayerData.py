@@ -6,6 +6,12 @@ class LayerData(list):
 
         self._regression_result = None
 
+    def get_layer_time(self):
+        return self[0].get_time()
+
+    def get_time(self):
+        time_list = [node.get_time() for node in self]
+        return time_list
 
     def get_state(self):
         state_list = [node.get_state() for node in self]

@@ -23,7 +23,6 @@ class NodeData(Node):
         option_payoff = option.payoff_state(node.get_state())
         node.set_offer(option_payoff)
 
-
     # **********  <Reading from the "database"> *************
     def get_regression(self):
         return self._regression

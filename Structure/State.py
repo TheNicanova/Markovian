@@ -3,8 +3,8 @@ class State:
   The state object
 
   Attributes:
-      time (float) : the total description of a situation includes the time
-      data : the data describing the state
+      time (float) : the total description of a situation includes the time.
+      data : the data describing the state.
 
   """
 
@@ -20,9 +20,9 @@ class State:
         return self._time
 
     def get_coord(self):
-        '''
+        """
     Returns:
         the state's coordinate
-    '''
+    """
         # could do some transformation of data
         return self._data

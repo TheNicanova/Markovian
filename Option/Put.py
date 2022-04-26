@@ -1,4 +1,4 @@
-import Option
+from Option.Option import *
 import config
 import numpy as np
 
@@ -14,6 +14,9 @@ class Put(Option):
             strike_price = config.default["put_strike"]
 
         self.strike_price = strike_price
+
+    def get_name(self):
+        return "Put Option with strike price " + str(self.strike_price)
 
     def payoff(self, time, coord):
         return np.maximum(0, self.strike_price - coord)

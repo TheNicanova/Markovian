@@ -43,8 +43,8 @@ class UnderlyingGenerator:
 
         acc = node
         for i in range(1, len(schedule)):
-            acc.children = [self.new_node(self.forward_to(acc.get_state(), schedule[i]))]
-            acc = acc.children[0]
+            acc.set_children([self.new_node(self.forward_to(acc.get_state(), schedule[i]))])
+            acc = acc.get_children()[0]
         return node
 
     def generate_children(self, node, forward_time, n=default["num_of_paths"]):

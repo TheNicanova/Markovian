@@ -6,7 +6,6 @@ class NodeLogic:
         pass
 
 
-
 class ContinuationOp(NodeLogic):
     def update(self, node):
         if node.get_children():
