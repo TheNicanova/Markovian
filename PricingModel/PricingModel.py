@@ -39,14 +39,17 @@ class PricingModel:
 
         for layer in self.layer_data_list:
             time = layer.get_layer_time()
-            self.option.plot(time, ax=ax_list[i])
+            x_min = np.min(layer.get_coord())
+            x_max = np.max(layer.get_coord())
+
+            self.option.plot(time, ax=ax_list[i], x_min=x_min, x_max=x_max)
             stop_coord = layer.get_stop()
             stop_y = np.zeros(len(stop_coord))
-            ax_list[i].scatter(stop_coord, stop_y)
+            ax_list[i].scatter(stop_coord, stop_y, label="stopped", marker='H', c='red')
             ax_list[i].set_xlabel("Coord")
             ax_list[i].set_ylabel("Reward")
             ax_list[i].set_title("At time " + f'{time:.2f}')
-            ax_list[i].legend()
             i += 1
 
+        ax_list[-1].legend() # Last / First ax
         return ax_list

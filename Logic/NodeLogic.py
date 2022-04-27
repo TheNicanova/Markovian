@@ -15,6 +15,16 @@ class ContinuationOp(NodeLogic):
         node.set_continuation(continuation)
 
 
+class PolicyOp(NodeLogic):
+    def update(self, node):
+        if node.get_children():
+            policy = node.get_offer() > node.get_continuation()
+        else:
+            policy = True
+
+        node.set_policy(policy)
+
+
 class ValueOp(NodeLogic):
     def update(self, node):
         if node.get_children():
@@ -32,11 +42,12 @@ class LogLikelihoodOp(NodeLogic):
 
 class RegressionValueOp(NodeLogic):
     def update(self, node):
-        if node.get_policy() is False:
-            value = node.get_continuation()
-            node.set_value(value)
+        if node.get_policy() is True:
+            value = node.get_offer()
         else:
-            ValueOp().update(node)
+            value = node.get_continuation()
+
+        node.set_value(value)
 
 
 class RegressionPolicyOp(NodeLogic):
@@ -49,12 +60,3 @@ class RegressionPolicyOp(NodeLogic):
 
         node.set_policy(policy)
 
-
-class PolicyOp(NodeLogic):
-    def update(self, node):
-        if node.get_children():
-            policy = node.get_offer() > node.get_continuation()
-        else:
-            policy = True
-
-        node.set_policy(policy)
