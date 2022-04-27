@@ -9,8 +9,6 @@ import copy
 um = GeometricBrownianMotion()
 root = um.generate_paths()
 
-root.plot()
-
 
 # 2. Get an objective function.
 option = Put(1.3)

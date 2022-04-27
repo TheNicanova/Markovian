@@ -2,8 +2,6 @@ import numpy as np
 from config import *
 
 
-# TODO: Probably best to add a state to regression model containing the params
-
 class Regression():
     def __init__(self, param=default["degree"]):
         self.param = param
@@ -20,4 +18,3 @@ class PolynomialRegression(Regression):
 
     def is_fittable(self, coord, targets):
         return len(coord) > self.param
-

@@ -2,7 +2,7 @@
 default = {
     "num_of_paths": 5,
     "num_of_timestamps": 12,
-    "degree": 3,
+    "degree": 2,
 
     "initial_time": 0,
     "terminal_time": 1,

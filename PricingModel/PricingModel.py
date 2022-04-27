@@ -19,7 +19,7 @@ class PricingModel:
 
         # initialize all the nodes
         for layer_data in self.layer_data_list:
-            for node_data in layer_data:
+            for node_data in layer_data.get_node():
                 NodeData.init_node_data(node_data, option)
 
     def get_root_value(self):
@@ -40,8 +40,13 @@ class PricingModel:
         for layer in self.layer_data_list:
             time = layer.get_layer_time()
             self.option.plot(time, ax=ax_list[i])
+            stop_coord = layer.get_stop()
+            stop_y = np.zeros(len(stop_coord))
+            ax_list[i].scatter(stop_coord, stop_y)
             ax_list[i].set_xlabel("Coord")
             ax_list[i].set_ylabel("Reward")
             ax_list[i].set_title("At time " + f'{time:.2f}')
+            ax_list[i].legend()
             i += 1
+
         return ax_list

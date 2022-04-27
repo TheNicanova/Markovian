@@ -9,7 +9,7 @@ class LayerOperation:
 
     @classmethod
     def update(cls, node_op_list, layer_data):
-        for node_data in layer_data:
+        for node_data in layer_data.get_node():
             for node_op in node_op_list:
                 node_op.update(node_data)
 
@@ -71,11 +71,11 @@ class RegressionContinuationLayerOp(LayerOperation):
         if self.regression_model.is_fittable(coord_list, target_list):
             continuation_model = self.regression_model.fit(coord_list, target_list)
             layer_data.set_regression_result(continuation_model)
-            for node in layer_data:
+            for node in layer_data.get_node():
                 continuation_model_evaluated = continuation_model(node.get_coord())
                 node.set_regression(continuation_model_evaluated)
         else:
-            for node in layer_data:
+            for node in layer_data.get_node():
                 layer_data.set_regression_result(None)
                 node.set_regression(node.get_continuation())
 

@@ -16,7 +16,7 @@ class Put(Option):
         self.strike_price = strike_price
 
     def get_name(self):
-        return "Put Option with strike price " + str(self.strike_price)
+        return "Put(" + str(self.strike_price) + ")"
 
     def payoff(self, time, coord):
         return np.maximum(0, self.strike_price - coord)

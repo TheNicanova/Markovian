@@ -18,7 +18,6 @@ class ContinuationOp(NodeLogic):
 class ValueOp(NodeLogic):
     def update(self, node):
         if node.get_children():
-            # TODO: warning message
             value = np.maximum(node.get_continuation(), node.get_offer())
         else:
             value = node.get_offer()
