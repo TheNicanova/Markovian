@@ -2,7 +2,7 @@ import numpy as np
 from config import *
 
 
-class Regression():
+class Regression:
     def __init__(self, param=default["degree"]):
         self.param = param
 

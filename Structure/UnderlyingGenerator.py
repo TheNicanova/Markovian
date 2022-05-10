@@ -80,14 +80,15 @@ class GeometricBrownianMotion(UnderlyingGenerator):
   A concrete class of Underlying model.
   """
 
-    def __init__(self, rate=0.06, sigma=0.2, dividend=0):
+    def __init__(self, rate=None, sigma=None, dividend=None):
         super().__init__()
         # To be modularized ...
         self.name = "Geometric Brownian Motion"
-        self.rate = rate
-        self.sigma = sigma
-        self.dividend = dividend
         self.rng = np.random.default_rng()
+
+        if rate is None: self.rate = gbm_default['rate']
+        if sigma is None: self.sigma = gbm_default['sigma']
+        if dividend is None: self.dividend = gbm_default['dividend']
 
     def forward_to(self, initial_state, forward_time):
         """
@@ -105,7 +106,7 @@ class GeometricBrownianMotion(UnderlyingGenerator):
         # Returns a default state.
         return State(default["initial_time"], 1.0)
 
-    def generate_lattice(self, node=None, schedule=None):
+    def generate_lattice(self, node=None, schedule=None, n=None):
 
         # Setting defaults
         if node is None: node = self.get_default_node()

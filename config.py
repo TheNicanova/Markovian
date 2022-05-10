@@ -2,13 +2,16 @@
 default = {
     "num_of_paths": 10,
     "num_of_timestamps": 8,
+
     "degree": 2,
+
 
     "initial_time": 0,
     "terminal_time": 1,
 
     "call_strike": 0.3,
     "put_strike": 0.8,
+
 
     # Plotting
     "time_resolution_continuation": 100,
@@ -19,3 +22,11 @@ default = {
     "x_res": 100,
     "axs_width": 4
 }
+
+
+gbm_default = {
+    "rate": 0.06,
+    "sigma": 0.2,
+    "dividend": 0
+}
+

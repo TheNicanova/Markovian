@@ -3,13 +3,15 @@ import numpy as np
 from PricingModel.PricingModel import *
 import Logic.LayerLogic as LayerLogic
 from config import *
+from Utility.Regression import *
 
 
 class LangStaff(PricingModel):
 
-    def __init__(self, root, offer):
+    def __init__(self, root, offer, regression_model=None):
         super().__init__(root, offer)
-        self.layer_op_list = [LayerLogic.LangStaffLayerOp() for _ in self.layer_data_list]
+        if regression_model is None: regression_model = PolynomialRegression()
+        self.layer_op_list = [LayerLogic.LangStaffLayerOp(regression_model=regression_model) for _ in self.layer_data_list]
 
     def plot(self):
         ax_list = super().plot()

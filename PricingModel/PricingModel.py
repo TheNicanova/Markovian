@@ -29,6 +29,12 @@ class PricingModel:
         for i in range(len(self.layer_data_list)):
             self.layer_op_list[i].update(self.layer_data_list[i])
 
+    @classmethod
+    def get_name(cls):
+        return cls.__name__
+
+
+
     def plot(self):
         axs_width = default["axs_width"]
         axs_height = math.ceil(len(self.layer_data_list)//axs_width)
