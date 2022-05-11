@@ -12,6 +12,7 @@ class ContinuationOp(NodeLogic):
             continuation = np.average([child.get_value() for child in node.get_children()])
         else:
             continuation = 0
+
         node.set_continuation(continuation)
 
 

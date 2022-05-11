@@ -1,17 +1,17 @@
-from Structure.UnderlyingGenerator import *
-from Option.Put import *
-from PricingModel.Langstaff import *
-from PricingModel.Basic import *
 from Plotting.RidgePlot import *
-import copy
 from Experiment.BenchMark import *
-import matplotlib.pyplot as plt
-import numpy as np
 
 bm = BenchMark(GeometricBrownianMotion(), Put(0.9))
 
-result = bm.price([LangStaff, Basic], n=100, m=100)
+
+model_list = [
+              LangStaff(regression_model=NearestNeighbors1D(1)),
+              Basic()
+              ]
+
+result = bm.price(model_list, n=10, m=100)
 
 RidgePlot.plot(result)
 
-#TODO Automate the naming of different models
+model_list[0].plot()
+model_list[1].plot()

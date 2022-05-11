@@ -52,8 +52,8 @@ class RegressionValueLayerOp(LayerOperation):
 class BasicLayerOp(LayerOperation):
 
     def update(self, layer_data):
-        ContinuationLayerOp().update(layer_data)
-        ValueLayerOp().update(layer_data)
+        node_op_list = [ContinuationOp(), ValueOp(), PolicyOp()]
+        LayerOperation.update(node_op_list, layer_data)
 
 
 class RegressionContinuationLayerOp(LayerOperation):
@@ -87,9 +87,8 @@ class LangStaffLayerOp(LayerOperation):
             regression_model = PolynomialRegression()
         self.regression_model = regression_model
 
-    def update(self, layer):
-        ContinuationLayerOp().update(layer)
-        RegressionContinuationLayerOp(self.regression_model).update(layer)
-        RegressionPolicyLayerOp().update(layer)
-        RegressionValueLayerOp().update(layer)
+    def update(self, layer_data):
+        LayerOperation.update([ContinuationOp()], layer_data)
+        RegressionContinuationLayerOp(self.regression_model).update(layer_data)
+        LayerOperation.update([RegressionPolicyOp(), RegressionValueOp()], layer_data)
 

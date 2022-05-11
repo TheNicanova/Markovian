@@ -7,15 +7,22 @@ import math
 
 class PricingModel:
 
-    def __init__(self, root, option):
+    def __init__(self):
+        self.name = self.__class__.__name__
+        self.root = None
+        self.option = None
+        self.layer_data_list = None
+        self._node_partition = None
+
+    def get_layer_op_list(self):
+        raise "not implemented"
+
+    def pre_training(self, root, option):
         self.root = root
         self.option = option
-        self.node_partition = root.bfs()
-        self.node_partition.reverse()  # slow and in place
-        self.layer_op_list = []
-
-        # initialize all the layer_data
-        self.layer_data_list = [LayerData(node_list) for node_list in self.node_partition]
+        self._node_partition = root.bfs()
+        self._node_partition.reverse()  # slow and in place
+        self.layer_data_list = [LayerData(node_list) for node_list in self._node_partition]
 
         # initialize all the nodes
         for layer_data in self.layer_data_list:
@@ -25,19 +32,22 @@ class PricingModel:
     def get_root_value(self):
         return self.root.get_value()
 
-    def train(self):
-        for i in range(len(self.layer_data_list)):
-            self.layer_op_list[i].update(self.layer_data_list[i])
+    def train(self, root, option):
+        self.pre_training(root, option)
+        layer_op_list = self.get_layer_op_list()
+        layer_data_list = self.layer_data_list
+        for (layer_op, layer_data) in zip(layer_op_list, layer_data_list):
+            layer_op.update(layer_data)
 
-    @classmethod
-    def get_name(cls):
-        return cls.__name__
+    def get_name(self):
+        return self.name
 
-
+    def set_name(self, name):
+        self.name = name
 
     def plot(self):
         axs_width = default["axs_width"]
-        axs_height = math.ceil(len(self.layer_data_list)//axs_width)
+        axs_height = math.ceil(len(self.layer_data_list) // axs_width)
         fig, axs = plt.subplots(axs_width, axs_height)
         i = 0
         ax_list = list(axs.ravel())
@@ -57,5 +67,5 @@ class PricingModel:
             ax_list[i].set_title("At time " + f'{time:.2f}')
             i += 1
 
-        ax_list[-1].legend() # Last / First ax
+        ax_list[-1].legend()  # Last / First ax
         return ax_list

@@ -4,6 +4,7 @@ default = {
     "num_of_timestamps": 8,
 
     "degree": 2,
+    "num_neighbor": 5,
 
 
     "initial_time": 0,

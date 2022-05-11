@@ -1,4 +1,6 @@
 import numpy as np
+from config import *
+
 
 def priceBS(S, K, sigma, r, q, T):
     ''' The Black–Scholes formula calculates the price of European put option.
@@ -24,6 +26,6 @@ def priceBS(S, K, sigma, r, q, T):
     d2 = d1 - c;
 
     Peu = - S * np.exp(-q * T) * norm.cdf(-d1) + K * np.exp(-r * T) * norm.cdf(-d2)
-    Delta = -np.exp(-q * T) * norm.cdf(-d1)
+    #Delta = -np.exp(-q * T) * norm.cdf(-d1)
 
-    return Peu, Delta
+    return Peu
