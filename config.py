@@ -1,6 +1,6 @@
 
 default = {
-    "num_of_paths": 10,
+    "num_of_paths": 20,
     "num_of_timestamps": 8,
 
     "degree": 2,
@@ -11,7 +11,7 @@ default = {
     "terminal_time": 1,
 
     "call_strike": 0.3,
-    "put_strike": 0.8,
+    "put_strike": 1.1,
 
 
     # Plotting
@@ -21,7 +21,7 @@ default = {
     "x_min": 0,
     "x_max": 2.5,
     "x_res": 100,
-    "axs_width": 4
+    "axs_width": 1
 }
 
 

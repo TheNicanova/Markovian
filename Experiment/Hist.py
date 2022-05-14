@@ -1,10 +1,7 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from Structure.UnderlyingGenerator import *
+from UnderlyingModel import *
 from Option.Put import *
 from PricingModel.Langstaff import *
 from PricingModel.Basic import *
-import copy
 
 um = GeometricBrownianMotion()
 

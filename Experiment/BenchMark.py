@@ -9,25 +9,28 @@ class BenchMark:
         self.option = option
         self.data_generator = underlying_model.generate_paths
 
-    def price(self, model_list, n=100, m=100):
+    def price(self, model_list, n_list=[100], m=100):
+
         frames = []
-        i = 0
+
         for model in model_list:
 
-            i += 1
-            model_result = []
+            for n in n_list:
 
-            for _ in range(m):
-                data = self.data_generator(n=n)
-                model.train(data, self.option)
-                price = model.get_root_value()
-                model_result.append(price)
+                model_result = []
 
-            model_frame = pd.DataFrame(
-                {
-                    "Model Name": model.get_name() + str(i),
-                    "Price": model_result
-                }
-            )
-            frames.append(model_frame)
+                for _ in range(m):
+                    data = self.data_generator(n=n)
+                    model.train(data, self.option)
+                    price = model.get_root_value()
+                    model_result.append(price)
+
+                model_frame = pd.DataFrame(
+                    {
+                        "Model Name": model.get_name(),
+                        "Price": model_result,
+                        "n": n
+                    }
+                )
+                frames.append(model_frame)
         return pd.concat(frames)

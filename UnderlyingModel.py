@@ -1,7 +1,7 @@
-from Structure.State import *
-from Structure.NodeData import *
-from config import *
 import numpy as np
+
+import config
+import Storage
 
 
 class UnderlyingGenerator:
@@ -14,11 +14,11 @@ class UnderlyingGenerator:
 
     @classmethod
     def new_node(cls, state):
-        return NodeData(state)
+        return Storage.Node(state)
 
     @classmethod
     def get_default_schedule(self):
-        return np.linspace(default["initial_time"], default["terminal_time"], default["num_of_timestamps"])
+        return np.linspace(config.default["initial_time"], config.default["terminal_time"], config.default["num_of_timestamps"])
 
     def __init__(self):
         pass
@@ -47,7 +47,7 @@ class UnderlyingGenerator:
             acc = acc.get_children()[0]
         return node
 
-    def generate_children(self, node, forward_time, n=default["num_of_paths"]):
+    def generate_children(self, node, forward_time, n=config.default["num_of_paths"]):
 
         assert n > 0
 
@@ -57,7 +57,7 @@ class UnderlyingGenerator:
 
         return node
 
-    def generate_paths(self, node=None, schedule=None, n=default["num_of_paths"]):
+    def generate_paths(self, node=None, schedule=None, n=config.default["num_of_paths"]):
 
         # Setting defaults
         if node is None: node = self.get_default_node()
@@ -86,9 +86,13 @@ class GeometricBrownianMotion(UnderlyingGenerator):
         self.name = "Geometric Brownian Motion"
         self.rng = np.random.default_rng()
 
-        if rate is None: self.rate = gbm_default['rate']
-        if sigma is None: self.sigma = gbm_default['sigma']
-        if dividend is None: self.dividend = gbm_default['dividend']
+        if rate is None: rate = config.gbm_default['rate']
+        if sigma is None: sigma = config.gbm_default['sigma']
+        if dividend is None: dividend = config.gbm_default['dividend']
+
+        self.rate = rate
+        self.sigma = sigma
+        self.dividend = dividend
 
     def forward_to(self, initial_state, forward_time):
         """
@@ -100,11 +104,11 @@ class GeometricBrownianMotion(UnderlyingGenerator):
         updated_coord = initial_state.get_coord() * np.exp((
                                                                    self.rate - self.dividend - self.sigma ** 2.0 / 2.0) * dt + self.sigma * dt ** 0.5 * self.rng.standard_normal())
 
-        return State(forward_time, updated_coord)
+        return Storage.State(forward_time, updated_coord)
 
     def genesis(self):
         # Returns a default state.
-        return State(default["initial_time"], 1.0)
+        return Storage.State(config.default["initial_time"], 1.0)
 
     def generate_lattice(self, node=None, schedule=None, n=None):
 
@@ -137,12 +141,12 @@ class GeometricBrownianMotion(UnderlyingGenerator):
 
             # Populating next layer
             next_lowest_node_coord = current_layer[0].get_state().get_coord() * d
-            next_lowest_node = self.new_node(State(timestamp, next_lowest_node_coord))
+            next_lowest_node = self.new_node(Storage.State(timestamp, next_lowest_node_coord))
             next_layer.append(next_lowest_node)
 
             for node in current_layer:
                 next_higher_node_coord = node.get_coord() * u
-                next_higher_node = self.new_node(State(timestamp, next_higher_node_coord))
+                next_higher_node = self.new_node(Storage.State(timestamp, next_higher_node_coord))
                 next_layer.append(next_higher_node)
 
             # Connecting current layer to next layerù

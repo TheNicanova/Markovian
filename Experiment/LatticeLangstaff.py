@@ -1,4 +1,4 @@
-from Structure.UnderlyingGenerator import *
+from UnderlyingModel import *
 from Option.Put import *
 from PricingModel.Langstaff import *
 from PricingModel.Basic import *

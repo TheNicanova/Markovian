@@ -1,17 +1,18 @@
 from Plotting.RidgePlot import *
 from Experiment.BenchMark import *
 
-bm = BenchMark(GeometricBrownianMotion(), Put(0.9))
+bm = BenchMark(GeometricBrownianMotion(regression_model=Regression(4)), Put(0.9))
 
 
 model_list = [
-              LangStaff(regression_model=NearestNeighbors1D(1)),
-              Basic()
+            Basic(),
+            LangStaff()
               ]
 
-result = bm.price(model_list, n=10, m=100)
+result = bm.price(model_list, n_list=[10, 20], m=50)
+
+
 
 RidgePlot.plot(result)
 
-model_list[0].plot()
-model_list[1].plot()
+

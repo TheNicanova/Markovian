@@ -15,7 +15,7 @@ class Regression:
         return self.__class__.__name__ + "(" + str(self.param) + ")"
 
 
-class PolynomialRegression(Regression):
+class Polynomial(Regression):
 
     def __init__(self, param=default["degree"]):
         super().__init__(param)

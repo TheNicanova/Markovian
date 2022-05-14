@@ -1,9 +1,9 @@
-from Structure import UnderlyingGenerator
-from Option import Option
+import UnderlyingModel
+import Option
 import PricingModel
 
 # 1. Get some data.
-um = UnderlyingGenerator.GeometricBrownianMotion()
+um = UnderlyingModel.GeometricBrownianMotion()
 root = um.generate_lattice()
 
 # 2. Get an objective function.

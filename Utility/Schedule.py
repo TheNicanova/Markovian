@@ -2,7 +2,7 @@ import numpy as np
 from config import *
 
 
-class Schedule(list):
+class Linear(list):
     """
     Usage:
         Instantiation:
@@ -19,17 +19,3 @@ class Schedule(list):
 
         if n is not None and schedule is None:
             return list(np.linspace(default["initial_time"], default["terminal_time"], n))
-
-
-class Schedules(list):
-    """
-    Usage:
-        Instantiation:
-        Schedules(): A default list of schedule, e.g. [[0.  , 0.05, ... ,  1.], ...]
-        Schedules(somelist): somelist
-    """
-    def __new__(cls, args):
-        if args is None:
-            return [Schedule() for _ in range(default["num_of_paths"])]
-        else:
-            return list(args)

@@ -1,11 +1,7 @@
-from Structure.UnderlyingGenerator import *
 from Option.Put import *
 from PricingModel.Langstaff import *
 from PricingModel.Basic import *
-import copy
-from Experiment.BenchMark import *
 import matplotlib.pyplot as plt
-import numpy as np
 import seaborn as sns
 
 
@@ -15,7 +11,7 @@ class RidgePlot:
 
         pal = sns.cubehelix_palette()
 
-        g = sns.FacetGrid(dataframe, row="Model Name", hue="Model Name", aspect=15, height=.8, palette=pal)
+        g = sns.FacetGrid(dataframe, row="Model Name", col="n", hue="Model Name", margin_titles=True,  palette=pal)
 
         # Draw the densities in a few steps
         g.map(sns.kdeplot, "Price", bw_adjust=.5, clip_on=False, fill=True, alpha=1, linewidth=1.5)
