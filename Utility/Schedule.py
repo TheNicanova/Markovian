@@ -1,5 +1,5 @@
 import numpy as np
-from config import *
+from _config import *
 
 
 class Linear(list):

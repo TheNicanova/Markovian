@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import config
+import _config
 
 
 class Option:
@@ -24,11 +24,11 @@ class Option:
         if ax is None:
             fig, ax = plt.subplots()
         if x_min is None:
-            x_min = config.default["x_min"]
+            x_min = _config.default["x_min"]
         if x_max is None:
-            x_max = config.default["x_max"]
+            x_max = _config.default["x_max"]
 
-        x_res = config.default["x_res"]
+        x_res = _config.default["x_res"]
         x = np.linspace(x_min, x_max, x_res)
         ax.plot(x, self.payoff(time, x), label=self.get_name())
         return ax
@@ -41,7 +41,7 @@ class Put(Option):
     def __init__(self, strike_price=None):
         super().__init__()
         if strike_price is None:
-            strike_price = config.default["put_strike"]
+            strike_price = _config.default["put_strike"]
 
         self.strike_price = strike_price
 
@@ -59,7 +59,7 @@ class Call(Option):
     def __init__(self, strike_price=None):
         super().__init__()
         if strike_price is None:
-            strike_price = config.default["call_strike"]
+            strike_price = _config.default["call_strike"]
 
         self.strike_price = strike_price
 

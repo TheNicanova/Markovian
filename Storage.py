@@ -43,7 +43,8 @@ class Node:
         self._offer = None
         self._regression = None
         self._control_variate = None
-        self._european_continuation_value = None
+        self._controlled = None
+        self._european = None
         self._test_value = None
 
     def init(self, option):
@@ -69,8 +70,8 @@ class Node:
     def get_test_value(self):
         return self._test_value
 
-    def get_european_continuation_value(self):
-        return self._european_continuation_value
+    def get_european(self):
+        return self._european
 
     def get_regression(self):
         return self._regression
@@ -90,15 +91,26 @@ class Node:
     def get_control_variate(self):
         return self._control_variate
 
-    def get_stopping_node(self):
-        tmp_node = self
+    def get_controlled(self):
+        return self._controlled
 
-        while not tmp_node.get_policy():
-            if tmp_node.get_children():
-                tmp_node = tmp_node.get_children()[0]
+    def get_stopped_node(self):
+
+        # depth first search for stopped nodes
+        stack = [self]
+        stopped_node = []
+
+        while stack:
+            top_node = stack.pop()
+            if top_node.get_policy():
+                stopped_node.append(top_node)
             else:
-                break
-            return tmp_node
+                if top_node.get_children():
+                    stack = stack + top_node.get_children()
+                else:
+                    # If there is no children, it must be a stopped node.
+                    stopped_node.append(top_node)
+        return stopped_node
 
         # **********  </Reading from the "database"> *************
 
@@ -128,9 +140,11 @@ class Node:
     def set_control_variate(self, arg):
         self._control_variate = arg
 
-    def set_european_continuation_value(self, arg):
-        self._european_continuation_value = arg
+    def set_european(self, arg):
+        self._european = arg
 
+    def set_controlled(self, arg):
+        self._controlled = arg
         # **********  </Writing to the "database"> *************
 
         # ********* <Utility> *******
@@ -177,6 +191,8 @@ class Node:
 
     def plot_descendant(self):
         fig, ax = plt.subplots()
+        fig.supxlabel('Time')
+        fig.supylabel('Coordinates')
         layer_list = self.bfs()
         for list in layer_list:
             for node in list:
@@ -235,14 +251,17 @@ class Layer:
         regression_list = [node.get_regression() for node in self.node_list]
         return regression_list
 
-    def get_stopping_node(self):
+    def get_stopped_node(self):
         node_list = self.get_node()
-        stopping_list = [node.get_stopping_node() for node in node_list]
-        return stopping_list
+        stopped_node_list = []
+        for node in node_list:
+            stopped_node_list = stopped_node_list + node.get_stopped_node()
+
+        return stopped_node_list
 
     def get_stopped_european(self):
-        stopping_node = self.get_stopping_node()
-        european_list = [node.get_european_continuation_value() for node in stopping_node]
+        stopped_node_list = self.get_stopped_node()
+        european_list = [stopped_node.get_european() for stopped_node in stopped_node_list]
 
         return european_list
 

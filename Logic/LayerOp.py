@@ -25,65 +25,64 @@ class Basic(LayerOp):
             layer)
 
 
-class Regression(LayerOp):
+class ControlVariate(LayerOp):
 
-    def __init__(self, regression_model=None):
+    def __init__(self, control=None):
+        if control is None: control = BM_European
+        self.control = control
+
+    def update(self, layer):
+        modeled_continuation_list = layer.get_regression_result()
+        european_list = layer.get_stopped_european()
+        print("there are " + str(len(layer.get_node())))
+        covariance_matrix = np.cov(modeled_continuation_list, european_list)
+        control_variate_coefficient = covariance_matrix[0, 1] / covariance_matrix[1, 1]
+        print(control_variate_coefficient)
+
+        for node in layer.get_node():
+            european = node.get_european()
+
+            stopped_node = node.get_stopped_node()
+            stopped_european = stopped_node.get_european()
+
+            controlled = node.get_regression() - control_variate_coefficient * (stopped_european - european)
+            node.set_controlled(controlled)
+
+
+class Regression(LayerOp):
+    # TODO: Make Regression layer independent of coord and continuation.
+
+    def __init__(self, regression_model=None, in_the_money_only=True):
         if regression_model is None:
             regression_model = Utility.Regression.Polynomial()
         self.regression_model = regression_model
+        self.in_the_money_only = in_the_money_only
 
-    def update(self, layer_data):
+    def update(self, layer):
 
-        coord_list = layer_data.get_coord()
-        target_list = layer_data.get_continuation()
+        if self.in_the_money_only:
+            node_list = layer.get_node()
+            in_the_money_node_list = [node for node in node_list if node.get_offer() > 0]
+            coord_list = [node.get_coord() for node in in_the_money_node_list]
+            target_list = [node.get_continuation() for node in in_the_money_node_list]
+
+        else:
+            coord_list = layer.get_coord()
+            target_list = layer.get_continuation()
 
         if self.regression_model.is_fittable(coord_list, target_list):
             continuation_model = self.regression_model.fit(coord_list, target_list)
-            layer_data.set_regression_result(continuation_model)
-            for node in layer_data.get_node():
+            layer.set_regression_result(continuation_model)
+            for node in layer.get_node():
                 continuation_model_evaluated = continuation_model(node.get_coord())
                 node.set_regression(continuation_model_evaluated)
         else:
-            for node in layer_data.get_node():
-                layer_data.set_regression_result(None)
+            for node in layer.get_node():
+                layer.set_regression_result(None)
                 node.set_regression(node.get_continuation())
 
 
-class Rasmussen(LayerOp):
-
-    def __init__(self, control=None, regression_model=None):
-
-        if control is None: control = BM_European
-        if regression_model is None: regression_model = Regressu()
-
-        self.control = control
-        self.regression_model = regression_model
-
-    def update(self, layer_data):
-        LayerOp.update_each_node([ContinuationOp()], layer_data)
-        RegressionLayerOp(self.regression_model).update(layer_data)
-
-        LayerOp.update_each_node([EuropeanOp()], layer_data)
-
-        continuation_list = layer_data.get_continuation()
-        european_list = layer_data.get_stopped_european()
-
-        control_variate_coefficient = np.corrcoef(continuation_list, european_list)[0, 1]
-        print(control_variate_coefficient)
-
-        def get_corrected_value(node):
-            stopped_node = node.get_stopping_node()
-            stopped_european = stopped_node.get_european_continuation_value()
-            stopped_offer = stopped_node.get_offer()
-
-            corrected = node.get_regression() - control_variate_coefficient * (stopped_european - stopped_offer)
-
-            return max(corrected, node.get_european_continuation_value())
-
-        LayerOp.update_each_node([PolicyOp(get_test_value=get_corrected_value), ValueOp()], layer_data)
-
-
-class LangStaffLayerOp(LayerOp):
+class LongStaffLayerOp(LayerOp):
 
     def __init__(self, regression_model=None):
         if regression_model is None:
@@ -91,6 +90,10 @@ class LangStaffLayerOp(LayerOp):
 
         self.regression_model = regression_model
 
+        def test(node):
+            return node.get_offer() > node.get_regression()
+
+        self.test = test
 
     def update(self, layer_data):
         LayerOp.update_each_node(
@@ -98,11 +101,34 @@ class LangStaffLayerOp(LayerOp):
             layer_data)
 
         Regression(self.regression_model).update(layer_data)
-
-        def test(node):
-            return node.get_offer() > node.get_regression()
-
         LayerOp.update_each_node(
-            [PolicyOp(test),
+            [PolicyOp(self.test),
              ValueOp()],
             layer_data)
+
+
+class Rasmussen(LayerOp):
+
+    def __init__(self, control=None, regression_model=None):
+
+        if control is None: control = BM_European
+        if regression_model is None: regression_model = Utility.Regression.Polynomial()
+
+        def test(node):
+            return node.get_offer() > max(node.get_controlled(), node.get_european())
+
+        self.control = control
+        self.regression_model = regression_model
+        self.test = test
+
+    def update(self, layer):
+
+        LayerOp.update_each_node([ContinuationOp()], layer)
+
+        Regression(self.regression_model).update(layer)
+
+        LayerOp.update_each_node([EuropeanOp()], layer)  # Setting all nodes to the european option
+
+        ControlVariate().update(layer)
+
+        LayerOp.update_each_node([PolicyOp(test=self.test), RasmussenValueOp()], layer)

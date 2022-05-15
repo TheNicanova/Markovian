@@ -1,6 +1,6 @@
 import numpy as np
 
-import config
+import _config
 import Storage
 
 
@@ -18,10 +18,14 @@ class UnderlyingGenerator:
 
     @classmethod
     def get_default_schedule(self):
-        return np.linspace(config.default["initial_time"], config.default["terminal_time"], config.default["num_of_timestamps"])
+        return np.linspace(_config.default["initial_time"], _config.default["terminal_time"], _config.default["num_of_timestamps"])
 
     def __init__(self):
+        self.name = "No name given yet."
         pass
+
+    def get_name(self):
+        return self.name
 
     def forward_to(self, state, forward_time):
         pass
@@ -47,7 +51,7 @@ class UnderlyingGenerator:
             acc = acc.get_children()[0]
         return node
 
-    def generate_children(self, node, forward_time, n=config.default["num_of_paths"]):
+    def generate_children(self, node, forward_time, n=_config.default["num_of_paths"]):
 
         assert n > 0
 
@@ -57,7 +61,7 @@ class UnderlyingGenerator:
 
         return node
 
-    def generate_paths(self, node=None, schedule=None, n=config.default["num_of_paths"]):
+    def generate_paths(self, node=None, schedule=None, n=_config.default["num_of_paths"]):
 
         # Setting defaults
         if node is None: node = self.get_default_node()
@@ -86,9 +90,9 @@ class GeometricBrownianMotion(UnderlyingGenerator):
         self.name = "Geometric Brownian Motion"
         self.rng = np.random.default_rng()
 
-        if rate is None: rate = config.gbm_default['rate']
-        if sigma is None: sigma = config.gbm_default['sigma']
-        if dividend is None: dividend = config.gbm_default['dividend']
+        if rate is None: rate = _config.gbm_default['rate']
+        if sigma is None: sigma = _config.gbm_default['sigma']
+        if dividend is None: dividend = _config.gbm_default['dividend']
 
         self.rate = rate
         self.sigma = sigma
@@ -108,7 +112,7 @@ class GeometricBrownianMotion(UnderlyingGenerator):
 
     def genesis(self):
         # Returns a default state.
-        return Storage.State(config.default["initial_time"], 1.0)
+        return Storage.State(_config.default["initial_time"], 1.0)
 
     def generate_lattice(self, node=None, schedule=None, n=None):
 

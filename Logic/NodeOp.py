@@ -9,7 +9,13 @@ class NodeOp:
 class ContinuationOp(NodeOp):
     def update(self, node):
         if node.get_children():
-            continuation = np.average([child.get_value() for child in node.get_children()])
+            children = node.get_children()
+            stopped_node_of_children = []
+            for child in children:
+                stopped_node_of_children = stopped_node_of_children + child.get_stopped_node()
+            stopped_offer_list = [node.get_offer() for node in stopped_node_of_children]
+            continuation = np.average(stopped_offer_list)
+
         else:
             continuation = 0
 
@@ -22,6 +28,16 @@ class ValueOp(NodeOp):
             value = node.get_offer()
         else:
             value = node.get_continuation()
+
+        node.set_value(value)
+
+
+class RasmussenValueOp(NodeOp):
+    def update(self, node):
+        if node.get_policy() is True:
+            value = node.get_offer()
+        else:
+            value = node.get_controlled()
 
         node.set_value(value)
 
@@ -52,18 +68,9 @@ class EuropeanOp(NodeOp):
 
     def update(self, node):
         european_value = self.control(node)
-        node.set_european_continuation_value(european_value)
+        node.set_european(european_value)
 
 
 class LogLikelihoodOp(NodeOp):
     def __init__(self, p):
         self.p = p
-
-
-class ControlVariateOp(NodeOp):
-
-    def update(self, node):
-        if node.get_children():
-            pass
-        else:
-            node.set_control_variate(node.get_offer(node))

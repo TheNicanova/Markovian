@@ -1,10 +1,12 @@
 import numpy as np
 
-import config
-from config import *
+import _config
+from _config import *
 import numpy as np
-from config import *
+from _config import *
 from scipy.stats import norm
+
+
 
 
 def BM_European(node, strike_price=None, sigma=None, rate=None, dividend=None, time_to_maturity=None):
@@ -28,7 +30,7 @@ def BM_European(node, strike_price=None, sigma=None, rate=None, dividend=None, t
     if sigma is None: sigma = gbm_default['sigma']
     if dividend is None: dividend = gbm_default['dividend']
     if time_to_maturity is None: time_to_maturity = default["terminal_time"] - node.get_time()
-    if strike_price is None: strike_price = config.default["put_strike"]
+    if strike_price is None: strike_price = _config.default["put_strike"]
 
     current_price = node.get_coord()
 
