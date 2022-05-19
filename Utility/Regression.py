@@ -21,7 +21,6 @@ class Polynomial(Regression):
         super().__init__(param)
         self.param = param
 
-
     def fit(self, coord, target):  # here param is the degree
 
         p = np.polynomial.Polynomial.fit(coord, target, self.param)

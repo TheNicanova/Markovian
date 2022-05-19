@@ -1,5 +1,7 @@
+import numpy as np
+
 from Logic.NodeOp import *
-from Utility.ControlVariates import *
+from Utility.Oracle import *
 import Utility.Regression
 
 
@@ -25,28 +27,55 @@ class Basic(LayerOp):
             layer)
 
 
-class ControlVariate(LayerOp):
+class Control(LayerOp):
 
-    def __init__(self, control=None):
-        if control is None: control = BM_European
-        self.control = control
+    def __init__(self, to_control=None, control_estimate=None, control_expected=None):
+        if to_control is None:
+            def to_control(node):
+                return node.get_continuation()
+
+        if control_estimate is None:
+            def control_estimate(node):
+                stopped_node_list = node.get_stopped_node()
+                european_list = [European().put_price(stopped_node) for stopped_node in stopped_node_list]
+                return np.average(european_list)
+
+        if control_expected is None:
+            def control_expected(node):
+                return European().put_price(node)
+
+        self.to_control = to_control
+        self.control_estimate = control_estimate
+        self.control_expected = control_expected
+
+        self.control_op = ControlOp(to_control=self.to_control,
+                                    control_estimate=self.control_estimate,
+                                    control_expected=self.control_expected)
+
+        self.theta = None
 
     def update(self, layer):
-        modeled_continuation_list = layer.get_regression_result()
-        european_list = layer.get_stopped_european()
-        print("there are " + str(len(layer.get_node())))
-        covariance_matrix = np.cov(modeled_continuation_list, european_list)
-        control_variate_coefficient = covariance_matrix[0, 1] / covariance_matrix[1, 1]
-        print(control_variate_coefficient)
 
-        for node in layer.get_node():
-            european = node.get_european()
+        # Get theta
+        control_estimate_list = [self.control_estimate(node) for node in layer.get_node()]
+        to_control_list = [self.to_control(node) for node in layer.get_node()]
 
-            stopped_node = node.get_stopped_node()
-            stopped_european = stopped_node.get_european()
+        if len(layer.get_node()) > 1:
 
-            controlled = node.get_regression() - control_variate_coefficient * (stopped_european - european)
-            node.set_controlled(controlled)
+            covariance_matrix = np.cov(control_estimate_list, to_control_list)
+
+            if covariance_matrix[1, 1] > 0:
+                self.theta = covariance_matrix[0, 1] / covariance_matrix[1, 1]
+            else:
+                self.theta = 0
+        else:
+            self.theta = 0
+
+        # Set theta
+        self.control_op.theta = self.theta
+
+        # Apply control node wise
+        LayerOp.update_each_node([self.control_op], layer)
 
 
 class Regression(LayerOp):
@@ -57,6 +86,9 @@ class Regression(LayerOp):
             regression_model = Utility.Regression.Polynomial()
         self.regression_model = regression_model
         self.in_the_money_only = in_the_money_only
+
+    def get_name(self):
+        return self.regression_model.get_name() + "_money=" + str(self.in_the_money_only)
 
     def update(self, layer):
 
@@ -90,45 +122,62 @@ class LongStaffLayerOp(LayerOp):
 
         self.regression_model = regression_model
 
-        def test(node):
+        def policy_test(node):
             return node.get_offer() > node.get_regression()
 
-        self.test = test
+        self.regression_model = regression_model
+        self.policy_test = policy_test
 
-    def update(self, layer_data):
+    def update(self, layer):
         LayerOp.update_each_node(
             [ContinuationOp()],
-            layer_data)
+            layer)
 
-        Regression(self.regression_model).update(layer_data)
+        Regression(self.regression_model).update(layer)
+
         LayerOp.update_each_node(
-            [PolicyOp(self.test),
+            [PolicyOp(test=self.policy_test),
              ValueOp()],
-            layer_data)
+            layer)
 
 
 class Rasmussen(LayerOp):
 
-    def __init__(self, control=None, regression_model=None):
+    def __init__(self, control=None, regression=None, value_proxy=None,
+                 policy_test=None):
 
-        if control is None: control = BM_European
-        if regression_model is None: regression_model = Utility.Regression.Polynomial()
+        if control is None:
+            control = Control()
 
-        def test(node):
-            return node.get_offer() > max(node.get_controlled(), node.get_european())
+        if regression is None:
+            regression = Regression()
+
+        if policy_test is None:
+            def policy_test(node):
+                return node.get_offer() > max(node.get_control(), European().put_price(node))
+
+        if value_proxy is None:
+            def value_proxy(node):
+                return node.get_control()
 
         self.control = control
-        self.regression_model = regression_model
-        self.test = test
+        self.regression = regression
+        self.policy_test = policy_test
+        self.value_proxy = value_proxy
+
+    def get_name(self):
+        return ""
 
     def update(self, layer):
 
         LayerOp.update_each_node([ContinuationOp()], layer)
 
-        Regression(self.regression_model).update(layer)
+        self.control.update(layer)
 
-        LayerOp.update_each_node([EuropeanOp()], layer)  # Setting all nodes to the european option
+        for node in layer.get_node():
+            node.set_continuation(node.get_control())
 
-        ControlVariate().update(layer)
-
-        LayerOp.update_each_node([PolicyOp(test=self.test), RasmussenValueOp()], layer)
+        LayerOp.update_each_node(
+            [PolicyOp(test=self.policy_test),
+             ValueOp(proxy=self.value_proxy)],
+            layer)

@@ -42,9 +42,7 @@ class Node:
         self._value = None
         self._offer = None
         self._regression = None
-        self._control_variate = None
-        self._controlled = None
-        self._european = None
+        self._control = None
         self._test_value = None
 
     def init(self, option):
@@ -70,9 +68,6 @@ class Node:
     def get_test_value(self):
         return self._test_value
 
-    def get_european(self):
-        return self._european
-
     def get_regression(self):
         return self._regression
 
@@ -88,11 +83,8 @@ class Node:
     def get_offer(self):
         return self._offer
 
-    def get_control_variate(self):
-        return self._control_variate
-
-    def get_controlled(self):
-        return self._controlled
+    def get_control(self):
+        return self._control
 
     def get_stopped_node(self):
 
@@ -137,14 +129,11 @@ class Node:
     def set_regression(self, arg):
         self._regression = arg
 
-    def set_control_variate(self, arg):
-        self._control_variate = arg
-
     def set_european(self, arg):
         self._european = arg
 
-    def set_controlled(self, arg):
-        self._controlled = arg
+    def set_control(self, arg):
+        self._control = arg
         # **********  </Writing to the "database"> *************
 
         # ********* <Utility> *******

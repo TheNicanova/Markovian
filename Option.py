@@ -33,6 +33,7 @@ class Option:
         ax.plot(x, self.payoff(time, x), label=self.get_name())
         return ax
 
+
 class Put(Option):
     """
     A put option
@@ -51,6 +52,7 @@ class Put(Option):
     def payoff(self, time, coord):
         return np.maximum(0, self.strike_price - coord)
 
+
 class Call(Option):
     """
   A call option
@@ -68,6 +70,3 @@ class Call(Option):
 
     def payoff(self, time, coord):
         return np.maximum(0, coord - self.strike_price)
-
-
-

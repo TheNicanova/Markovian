@@ -1,4 +1,4 @@
-from Utility.ControlVariates import *
+from Utility.Oracle import *
 
 
 class NodeOp:
@@ -13,33 +13,13 @@ class ContinuationOp(NodeOp):
             stopped_node_of_children = []
             for child in children:
                 stopped_node_of_children = stopped_node_of_children + child.get_stopped_node()
-            stopped_offer_list = [node.get_offer() for node in stopped_node_of_children]
+            stopped_offer_list = [stopped_node.get_offer() for stopped_node in stopped_node_of_children]
             continuation = np.average(stopped_offer_list)
 
         else:
             continuation = 0
 
         node.set_continuation(continuation)
-
-
-class ValueOp(NodeOp):
-    def update(self, node):
-        if node.get_policy() is True:
-            value = node.get_offer()
-        else:
-            value = node.get_continuation()
-
-        node.set_value(value)
-
-
-class RasmussenValueOp(NodeOp):
-    def update(self, node):
-        if node.get_policy() is True:
-            value = node.get_offer()
-        else:
-            value = node.get_controlled()
-
-        node.set_value(value)
 
 
 class PolicyOp(NodeOp):
@@ -60,17 +40,46 @@ class PolicyOp(NodeOp):
         node.set_policy(policy)
 
 
-class EuropeanOp(NodeOp):
+class ValueOp(NodeOp):
 
-    def __init__(self, control=None):
-        if control is None: control = BM_European
-        self.control = control
+    def __init__(self, proxy=None):
+        if proxy is None:
+            def proxy(node):
+                return node.get_continuation()
+        self.proxy = proxy
 
     def update(self, node):
-        european_value = self.control(node)
-        node.set_european(european_value)
+        if node.get_policy() is True:
+            value = node.get_offer()
+        else:
+            value = self.proxy(node)
+
+        node.set_value(value)
 
 
-class LogLikelihoodOp(NodeOp):
-    def __init__(self, p):
-        self.p = p
+class ControlOp(NodeOp):
+
+    def __init__(self, theta=None, to_control=None, control_estimate=None, control_expected=None):
+        if to_control is None:
+            def to_control(node):
+                return node.get_continuation()
+
+        if control_estimate is None:
+            def control_estimate(node):
+                # TODO : remove this dependence on get_stopped_european
+                return node.get_stopped_european()
+
+        if control_expected is None:
+            def control_expected(node):
+                return European().put_price(node)
+
+        self.theta = None
+        self.to_control = to_control
+        self.control_estimate = control_estimate
+        self.control_expected = control_expected
+
+    def update(self, node):
+
+        controlled = self.to_control(node) - self.theta * (self.control_estimate(node) - self.control_expected(node))
+
+        node.set_control(controlled)

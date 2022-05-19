@@ -11,4 +11,3 @@ lattice = underlying_generator.generate_lattice(schedule=Schedule.Linear(50))
 paths.plot()
 lattice.plot()
 
-
