@@ -4,7 +4,7 @@ import math
 import copy
 import Storage
 import _config
-from PricingModel.Logic.NodeOp import *
+from PricingModel.Logic import *
 
 
 class PricingModel:
@@ -23,7 +23,7 @@ class PricingModel:
         self.option = option
 
         for layer in self.layer_list:
-            for node in layer:
+            for node in layer.get_node():
                 node_op.update(node)
 
     def get_root_value(self):

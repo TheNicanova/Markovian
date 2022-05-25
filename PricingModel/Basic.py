@@ -17,9 +17,8 @@ class Basic(PricingModel):
     def train(self, data, option):
         self.pre_training(data, option)
 
-        layer_op = BasicLayer()
         for layer in self.layer_list:
-            layer_op.update(layer)
+            BasicLayer().update(layer)
 
 
 

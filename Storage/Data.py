@@ -9,3 +9,6 @@ class Data:
 
     def get_layer_list(self):
         return self.layer_list
+
+    def plot(self):
+        self.get_root().plot()
