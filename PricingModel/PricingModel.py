@@ -2,43 +2,35 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import copy
-import Logic.LayerOp
 import Storage
 import _config
+from PricingModel.Logic.NodeOp import *
 
 
 class PricingModel:
 
-    def __init__(self, layer_op):
+    def __init__(self):
         self.name = self.__class__.__name__
         self.root = None
-        self.option = None
         self.layer_list = None
-        self._node_partition = None
-        self.layer_op = layer_op
+        self.option = None
 
-    def pre_training(self, root, option):
-        self.root = copy.deepcopy(root)
+    def pre_training(self, data, option):
+        node_op = OfferOp(option=option)
+
+        self.root = data.get_root()
+        self.layer_list = data.get_layer_list()
         self.option = option
-        self._node_partition = self.root.bfs()
-        self._node_partition.reverse()  # slow and in place
 
-        # initialize all the storage layers
-        self.layer_list = [Storage.Layer(node_list) for node_list in self._node_partition]
-
-        # initialize all the storage nodes
         for layer in self.layer_list:
-            for node in layer.get_node():
-                node.init(option)
+            for node in layer:
+                node_op.update(node)
 
     def get_root_value(self):
         return self.root.get_value()
 
-    def train(self, root, option):
-        self.pre_training(root, option)
-
-        for layer in self.layer_list:
-            self.layer_op.update(layer)
+    def train(self, data, option):
+        self.pre_training(data, option)
 
     def get_name(self):
         return self.name
@@ -87,38 +79,3 @@ class PricingModel:
 
         ax_list[-1].legend()  # Last / First ax
         return ax_list
-
-
-class Basic(PricingModel):
-
-    def __init__(self):
-        prototypical_layer = Logic.LayerOp.Basic()
-
-        super().__init__(prototypical_layer)
-
-
-class LongStaff(PricingModel):
-
-    def __init__(self, regression_model=None):
-        prototypical_layer = Logic.LayerOp.LongStaffLayerOp(regression_model=regression_model)
-        super().__init__(prototypical_layer)
-
-        self.name = self.name + "_" + prototypical_layer.regression_model.get_name()
-
-
-class Rasmussen(PricingModel):
-
-    def __init__(self, control=None, regression=None):
-
-        if control is None:
-            control = Logic.LayerOp.Control()
-        self.control = control
-
-        if regression is None:
-            regression = Logic.LayerOp.Regression()
-        self.regression = control
-
-        prototypical_layer = Logic.LayerOp.Rasmussen(control=self.control, regression=self.regression)
-        super().__init__(prototypical_layer)
-
-        self.name = self.name + "_" + prototypical_layer.get_name()

@@ -1,36 +1,6 @@
 import matplotlib.pyplot as plt
 
 
-class State:
-    """
-  The state object
-
-  Attributes:
-      time (float) : the total description of a situation includes the time.
-      data : the data describing the state.
-
-  """
-
-    def __init__(self, time, data):
-        self._time = time
-        self._data = data
-
-    def get_time(self):
-        """
-      Returns:
-        the state's coordinate
-      """
-        return self._time
-
-    def get_coord(self):
-        """
-    Returns:
-        the state's coordinate
-    """
-        # could do some transformation of data
-        return self._data
-
-
 class Node:
 
     def __init__(self, state, children=[]):
@@ -44,10 +14,7 @@ class Node:
         self._regression = None
         self._control = None
         self._test_value = None
-
-    def init(self, option):
-        option_payoff = option.payoff_state(self.get_state())
-        self.set_offer(option_payoff)
+        self._stopped_node = None
 
     # <Getters>
 
@@ -87,6 +54,8 @@ class Node:
         return self._control
 
     def get_stopped_node(self):
+        if self._stopped_node is not None:
+            return self._stopped_node
 
         # depth first search for stopped nodes
         stack = [self]
@@ -102,6 +71,7 @@ class Node:
                 else:
                     # If there is no children, it must be a stopped node.
                     stopped_node.append(top_node)
+        self._stopped_node = stopped_node
         return stopped_node
 
         # **********  </Reading from the "database"> *************
@@ -197,70 +167,3 @@ class Node:
                     ax = child.recursive_plot(ax)
                     child.children_drawn = True
         return ax
-
-
-# ******** </Observability> **********
-
-
-##### LAYER #####
-
-class Layer:
-
-    def __init__(self, arg):
-        self.node_list = arg
-        self._regression_result = None
-
-    def get_node(self):
-        return self.node_list
-
-    def get_layer_time(self):
-        return self.get_node()[0].get_time()
-
-    def get_time(self):
-        time_list = [node.get_time() for node in self.node_list]
-        return time_list
-
-    def get_state(self):
-        state_list = [node.get_state() for node in self.node_list]
-        return state_list
-
-    def get_coord(self):
-        coord_list = [node.get_coord() for node in self.node_list]
-        return coord_list
-
-    def get_continuation(self):
-        continuation_list = [node.get_continuation() for node in self.node_list]
-        return continuation_list
-
-    def get_stop(self):
-        stop_list = [node.get_coord() for node in self.node_list if node.get_policy()]
-        return stop_list
-
-    def get_regression(self):
-        regression_list = [node.get_regression() for node in self.node_list]
-        return regression_list
-
-    def get_stopped_node(self):
-        node_list = self.get_node()
-        stopped_node_list = []
-        for node in node_list:
-            stopped_node_list = stopped_node_list + node.get_stopped_node()
-
-        return stopped_node_list
-
-    def get_stopped_european(self):
-        stopped_node_list = self.get_stopped_node()
-        european_list = [stopped_node.get_european() for stopped_node in stopped_node_list]
-
-        return european_list
-
-    # <Setters>
-    def set_regression_result(self, arg):
-        self._regression_result = arg
-
-    # </Setters>
-
-    # <Getters>
-    def get_regression_result(self):
-        return self._regression_result
-    # </Getters>

@@ -1,30 +1,12 @@
 import numpy as np
 
-from Logic.NodeOp import *
-from Utility.Oracle import *
-import Utility.Regression
+import Utility
 
 
 class LayerOp:
 
     def update(self, layer):
         pass
-
-    @classmethod
-    def update_each_node(cls, node_op_list, layer):
-        for node_data in layer.get_node():
-            for node_op in node_op_list:
-                node_op.update(node_data)
-
-
-class Basic(LayerOp):
-
-    def update(self, layer):
-        LayerOp.update_each_node(
-            [ContinuationOp(),
-             PolicyOp(),
-             ValueOp()],
-            layer)
 
 
 class Control(LayerOp):

@@ -57,6 +57,16 @@ class ValueOp(NodeOp):
         node.set_value(value)
 
 
+class OfferOp(NodeOp):
+
+    def __init__(self, option=None):
+        self.option = option
+
+    def update(self, node):
+        offer = self.option.payoff_state(node.get_state())
+        node.set_offer(offer)
+
+
 class ControlOp(NodeOp):
 
     def __init__(self, theta=None, to_control=None, control_estimate=None, control_expected=None):
