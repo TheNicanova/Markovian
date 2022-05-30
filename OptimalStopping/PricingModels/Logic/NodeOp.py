@@ -1,4 +1,4 @@
-from Utility.Oracle import *
+import numpy as np
 
 
 class NodeOp:
@@ -67,6 +67,7 @@ class OfferOp(NodeOp):
         node.set_offer(offer)
 
 
+"""
 class ControlOp(NodeOp):
 
     def __init__(self, theta=None, to_control=None, control_estimate=None, control_expected=None):
@@ -93,3 +94,4 @@ class ControlOp(NodeOp):
         controlled = self.to_control(node) - self.theta * (self.control_estimate(node) - self.control_expected(node))
 
         node.set_control(controlled)
+"""

@@ -1,6 +1,4 @@
-import UnderlyingModel
-import Option
-import PricingModel
+import OptimalStopping as stop
 
 import pandas as pd
 
@@ -18,7 +16,7 @@ def price(underlying_generator=None, option=Option.Put, model_list=None, n_list=
         "Price": [],
         "Number of Paths": [],
         "Batch": [],
-        "Option": []
+        "Options": []
     }
 
     for batch in range(m):
@@ -32,6 +30,6 @@ def price(underlying_generator=None, option=Option.Put, model_list=None, n_list=
                 result_dict["Price"].append(root_price)
                 result_dict["Number of Paths"].append(n)
                 result_dict["Batch"].append(batch)
-                result_dict["Option"].append(option.get_name())
+                result_dict["Options"].append(option.get_name())
 
     return pd.DataFrame(result_dict)

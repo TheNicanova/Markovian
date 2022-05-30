@@ -1,10 +1,6 @@
-import numpy as np
-
-import _config
-import Utility.Schedule as Schedule
-from Storage.Node import *
-from Storage.Layer import *
-from Storage.Data import *
+import OptimalStopping.config as config
+import OptimalStopping.Utility.Schedule as Schedule
+import OptimalStopping.Storage as Storage
 
 
 class UnderlyingModel:
@@ -17,14 +13,14 @@ class UnderlyingModel:
 
     @classmethod
     def new_node(cls, state):
-        return Node(state)
+        return Storage.Node(state)
 
     @classmethod
     def new_layer(cls, node_list):
-        return Layer(node_list)
+        return Storage.Layer(node_list)
 
     @classmethod
-    def get_default_schedule(self):
+    def get_default_schedule(cls):
         return Schedule.Linear()
 
     def __init__(self):
@@ -58,7 +54,7 @@ class UnderlyingModel:
             acc = acc.get_children()[0]
         return node
 
-    def generate_children(self, node, forward_time, n=_config.default["num_of_paths"]):
+    def generate_children(self, node, forward_time, n=config.default["num_of_paths"]):
 
         assert n > 0
 
@@ -68,8 +64,7 @@ class UnderlyingModel:
 
         return node
 
-    def generate_paths(self, node=None, schedule=None, n=_config.default["num_of_paths"]):
-
+    def generate_paths(self, node=None, schedule=None, n=config.default["num_of_paths"]):
 
         # Setting defaults
         if node is None: node = self.get_default_node()
@@ -87,9 +82,6 @@ class UnderlyingModel:
 
         node_partition = node.bfs()
         node_partition.reverse()
-        layer_list = [Layer(node_list) for node_list in node_partition]
+        layer_list = [Storage.Layer(node_list) for node_list in node_partition]
 
-        return Data(node, layer_list)
-
-
-
+        return Storage.Data(node, layer_list)

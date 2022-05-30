@@ -1,6 +1,7 @@
-import _config
-from Option.Option import *
 import numpy as np
+import OptimalStopping.config as config
+
+from .Option import Option
 
 
 class Call(Option):
@@ -11,7 +12,7 @@ class Call(Option):
     def __init__(self, strike_price=None):
         super().__init__()
         if strike_price is None:
-            strike_price = _config.default["call_strike"]
+            strike_price = config.default["call_strike"]
 
         self.strike_price = strike_price
 

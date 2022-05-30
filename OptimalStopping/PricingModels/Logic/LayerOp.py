@@ -1,6 +1,6 @@
 import numpy as np
 
-import Utility
+import OptimalStopping.Utility as Utility
 
 
 class LayerOp:
@@ -9,6 +9,7 @@ class LayerOp:
         pass
 
 
+"""
 class Control(LayerOp):
 
     def __init__(self, to_control=None, control_estimate=None, control_expected=None):
@@ -58,10 +59,11 @@ class Control(LayerOp):
 
         # Apply control node wise
         LayerOp.update_each_node([self.control_op], layer)
+"""
 
 
 class Regression(LayerOp):
-    # TODO: Make Regression layer independent of coord and continuation.
+    # TODO: Make Regressions layer independent of coord and continuation.
 
     def __init__(self, regression_model=None, in_the_money_only=True):
         if regression_model is None:
@@ -84,7 +86,7 @@ class Regression(LayerOp):
             coord_list = layer.get_coord()
             target_list = layer.get_continuation()
 
-        if self.regression_model.is_fittable(coord_list, target_list):
+        if self.regression_model.can_fit(coord_list, target_list):
             continuation_model = self.regression_model.fit(coord_list, target_list)
             layer.set_regression_result(continuation_model)
             for node in layer.get_node():
@@ -94,72 +96,3 @@ class Regression(LayerOp):
             for node in layer.get_node():
                 layer.set_regression_result(None)
                 node.set_regression(node.get_continuation())
-
-
-class LongStaffLayerOp(LayerOp):
-
-    def __init__(self, regression_model=None):
-        if regression_model is None:
-            regression_model = Utility.Regression.Polynomial()
-
-        self.regression_model = regression_model
-
-        def policy_test(node):
-            return node.get_offer() > node.get_regression()
-
-        self.regression_model = regression_model
-        self.policy_test = policy_test
-
-    def update(self, layer):
-        LayerOp.update_each_node(
-            [ContinuationOp()],
-            layer)
-
-        Regression(self.regression_model).update(layer)
-
-        LayerOp.update_each_node(
-            [PolicyOp(test=self.policy_test),
-             ValueOp()],
-            layer)
-
-
-class Rasmussen(LayerOp):
-
-    def __init__(self, control=None, regression=None, value_proxy=None,
-                 policy_test=None):
-
-        if control is None:
-            control = Control()
-
-        if regression is None:
-            regression = Regression()
-
-        if policy_test is None:
-            def policy_test(node):
-                return node.get_offer() > max(node.get_control(), European().put_price(node))
-
-        if value_proxy is None:
-            def value_proxy(node):
-                return node.get_control()
-
-        self.control = control
-        self.regression = regression
-        self.policy_test = policy_test
-        self.value_proxy = value_proxy
-
-    def get_name(self):
-        return ""
-
-    def update(self, layer):
-
-        LayerOp.update_each_node([ContinuationOp()], layer)
-
-        self.control.update(layer)
-
-        for node in layer.get_node():
-            node.set_continuation(node.get_control())
-
-        LayerOp.update_each_node(
-            [PolicyOp(test=self.policy_test),
-             ValueOp(proxy=self.value_proxy)],
-            layer)

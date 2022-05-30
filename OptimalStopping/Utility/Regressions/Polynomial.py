@@ -1,11 +1,12 @@
-import _config
-import Utility.Regression.Regression as Interface
 import numpy as np
+import OptimalStopping.config as config
+
+from OptimalStopping.Utility.Regressions.Regression import Regression
 
 
-class Polynomial(Interface.Regression):
+class Polynomial(Regression):
 
-    def __init__(self, param=_config.default["degree"]):
+    def __init__(self, param=config.default["degree"]):
         super().__init__(param)
         self.param = param
 
@@ -13,7 +14,7 @@ class Polynomial(Interface.Regression):
 
         p = np.polynomial.Polynomial.fit(coord, target, self.param)
         return lambda x: np.maximum(0, p(x))
-    # TODO: send in the actual result, no a lambda
+    # TODO: send in the actual result, not a lambda
 
     def can_fit(self, coord, targets):
         return len(coord) > self.param

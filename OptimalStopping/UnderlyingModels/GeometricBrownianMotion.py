@@ -1,10 +1,8 @@
-import _config
-from UnderlyingModel.MarkovModel import *
 import numpy as np
-from Storage.State import *
-from Storage.Node import *
-from Storage.Layer import *
-from Storage.Data import *
+import OptimalStopping.config as config
+
+from OptimalStopping.Storage import *
+from .UnderlyingModel import UnderlyingModel
 
 
 class GeometricBrownianMotion(UnderlyingModel):
@@ -17,9 +15,9 @@ class GeometricBrownianMotion(UnderlyingModel):
         self.name = "Geometric Brownian Motion"
         self.rng = np.random.default_rng()
 
-        if rate is None: rate = _config.gbm_default['rate']
-        if sigma is None: sigma = _config.gbm_default['sigma']
-        if dividend is None: dividend = _config.gbm_default['dividend']
+        if rate is None: rate = config.gbm_default['rate']
+        if sigma is None: sigma = config.gbm_default['sigma']
+        if dividend is None: dividend = config.gbm_default['dividend']
 
         self.rate = rate
         self.sigma = sigma
@@ -39,7 +37,7 @@ class GeometricBrownianMotion(UnderlyingModel):
 
     def genesis(self):
         # Returns a default state.
-        return State(_config.default["initial_time"], 1.0)
+        return State(config.default["initial_time"], 1.0)
 
     def generate_lattice(self, node=None, schedule=None, n=None):
 

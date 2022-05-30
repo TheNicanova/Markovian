@@ -1,10 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import math
-import copy
-import Storage
-import _config
-from PricingModel.Logic import *
+import OptimalStopping.config as config
+import numpy as np
+
+from .Logic import *
 
 
 class PricingModel:
@@ -40,7 +39,7 @@ class PricingModel:
 
     def plot(self):
 
-        axs_width = _config.default["axs_width"]
+        axs_width = config.default["axs_width"]
         axs_height = math.ceil(len(self.layer_list) // axs_width)
         fig, axs = plt.subplots(axs_width, axs_height)
         fig.supxlabel(self.get_name())
@@ -66,7 +65,7 @@ class PricingModel:
             if layer.get_regression_result():
                 regression_function = layer.get_regression_result()
 
-                x_res = _config.default["x_res"]
+                x_res = config.default["x_res"]
                 x = np.linspace(x_min, x_max, x_res)
 
                 y = [regression_function(el) for el in x]

@@ -1,12 +1,12 @@
 import numpy as np
-from _config import *
+import OptimalStopping.config as config
 
 
 class Schedule(list):
     """
     Usage:
         Instantiation:
-        Schedule(): A default schedule, e.g. [0.  , 0.05, ... ,  1.]
+        Schedule(): A config.default schedule, e.g. [0.  , 0.05, ... ,  1.]
         Schedule(6):    [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
         Schedule(_,np.linspace(0,1,2)):     [0.0,1.0]
     """
@@ -16,10 +16,10 @@ class Schedule(list):
             return list(schedule)
 
         if n is None and schedule is None:
-            return list(np.linspace(default["initial_time"], default["terminal_time"], default["num_of_timestamps"]))
+            return list(np.linspace(config.default["initial_time"], config.default["terminal_time"], config.default["num_of_timestamps"]))
 
         if n is not None and schedule is None:
-            return list(np.linspace(default["initial_time"], default["terminal_time"], n))
+            return list(np.linspace(config.default["initial_time"], config.default["terminal_time"], n))
 
 
 class Linear(Schedule):

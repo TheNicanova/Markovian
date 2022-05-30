@@ -1,6 +1,4 @@
-import _config
-from UnderlyingModel.MarkovModel import *
-import numpy as np
+from .UnderlyingModel import UnderlyingModel
 
 
 class BrownianMotion(UnderlyingModel):
