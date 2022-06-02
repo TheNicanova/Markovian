@@ -1,7 +1,8 @@
 import numpy as np
 
 from OptimalStopping.Utility.Regressions import Polynomial
-from OptimalStopping.Storage.Layer import Layer
+import OptimalStopping.Utility.Oracle as Oracle
+from .NodeOp import *
 
 
 class LayerOp:
@@ -10,7 +11,6 @@ class LayerOp:
         pass
 
 
-"""
 class Control(LayerOp):
 
     def __init__(self, to_control=None, control_estimate=None, control_expected=None):
@@ -21,29 +21,29 @@ class Control(LayerOp):
         if control_estimate is None:
             def control_estimate(node):
                 stopped_node_list = node.get_stopped_node()
-                european_list = [European().put_price(stopped_node) for stopped_node in stopped_node_list]
+                european_list = [Oracle.European().put_price(stopped_node) for stopped_node in stopped_node_list]
                 return np.average(european_list)
 
         if control_expected is None:
             def control_expected(node):
-                return European().put_price(node)
+                return Oracle.European().put_price(node)
 
         self.to_control = to_control
         self.control_estimate = control_estimate
         self.control_expected = control_expected
 
-        self.control_op = ControlOp(to_control=self.to_control,
-                                    control_estimate=self.control_estimate,
-                                    control_expected=self.control_expected)
-
         self.theta = None
+        self.control_op = None  # To be initialized once we know theta
+
+    def get_name(self):
+        return "european_control"
 
     def update(self, layer):
 
         # Get theta
         control_estimate_list = [self.control_estimate(node) for node in layer.get_node()]
         to_control_list = [self.to_control(node) for node in layer.get_node()]
-
+        # TODO: If layer.get_node() is 1: get the theta from the next layer
         if len(layer.get_node()) > 1:
 
             covariance_matrix = np.cov(control_estimate_list, to_control_list)
@@ -56,11 +56,13 @@ class Control(LayerOp):
             self.theta = 0
 
         # Set theta
-        self.control_op.theta = self.theta
+        self.control_op = ControlOp(theta=self.theta,
+                                    to_control=self.to_control,
+                                    control_estimate=self.control_estimate,
+                                    control_expected=self.control_expected)
 
-        # Apply control node wise
-        LayerOp.update_each_node([self.control_op], layer)
-"""
+        # Apply control node-wise
+        layer.update_each_node([self.control_op])
 
 
 class Regression(LayerOp):

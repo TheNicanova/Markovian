@@ -67,24 +67,11 @@ class OfferOp(NodeOp):
         node.set_offer(offer)
 
 
-"""
 class ControlOp(NodeOp):
 
     def __init__(self, theta=None, to_control=None, control_estimate=None, control_expected=None):
-        if to_control is None:
-            def to_control(node):
-                return node.get_continuation()
 
-        if control_estimate is None:
-            def control_estimate(node):
-                # TODO : remove this dependence on get_stopped_european
-                return node.get_stopped_european()
-
-        if control_expected is None:
-            def control_expected(node):
-                return European().put_price(node)
-
-        self.theta = None
+        self.theta = theta
         self.to_control = to_control
         self.control_estimate = control_estimate
         self.control_expected = control_expected
@@ -94,4 +81,3 @@ class ControlOp(NodeOp):
         controlled = self.to_control(node) - self.theta * (self.control_estimate(node) - self.control_expected(node))
 
         node.set_control(controlled)
-"""

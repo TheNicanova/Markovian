@@ -1,6 +1,5 @@
-import UnderlyingModel
-import Option
-import _config
+import OptimalStopping as ops
+import OptimalStopping.config as config
 import numpy as np
 from scipy.stats import norm
 
@@ -10,7 +9,7 @@ class European:
     def __init__(self, underlying_model=None, option=None, maturity=None):
 
         if underlying_model is None:
-            underlying_model = UnderlyingModel.GeometricBrownianMotion()
+            underlying_model = ops.UnderlyingModels.GeometricBrownianMotion()
 
         self.underlying_model = underlying_model
         self.rate = self.underlying_model.rate
@@ -18,12 +17,12 @@ class European:
         self.dividend = self.underlying_model.dividend
 
         if maturity is None:
-            maturity = _config.default["terminal_time"]
+            maturity = config.default["terminal_time"]
 
         self.maturity = maturity
 
         if option is None:
-            option = Option.Put()
+            option = ops.Options.Put()
 
         self.option = option
         self.strike_price = self.option.strike_price

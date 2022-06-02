@@ -1,62 +1,90 @@
 from .PricingModel import *
 from .Logic import *
+from OptimalStopping.Utility.Regressions import Polynomial
+import OptimalStopping.Utility.Oracle as Oracle
 
 
-class RasmussenLayer(LayerOp):
+class RasmussenLayerOp(LayerOp):
 
-    def __init__(self, control=None, regression=None, value_proxy=None,
-                 policy_test=None):
-
-        if control is None:
-            control = Control()
-
-        if regression is None:
-            regression = Regression()
-
-        if policy_test is None:
-            def policy_test(node):
-                return node.get_offer() > max(node.get_control(), European().put_price(node))
-
-        if value_proxy is None:
-            def value_proxy(node):
-                return node.get_control()
-
-        self.control = control
-        self.regression = regression
-        self.policy_test = policy_test
+    def __init__(self, control_layer=None, regression_layer=None, value_proxy=None,
+                 policy_test=None, option=None):
+        self.control_layer = control_layer
+        self.regression_layer = regression_layer
         self.value_proxy = value_proxy
-
-    def get_name(self):
-        return ""
+        self.policy_test = policy_test
+        self.option = option
 
     def update(self, layer):
+        layer.update_each_node([OfferOp(option=self.option), ContinuationOp()])
 
-        LayerOp.update_each_node([ContinuationOp()], layer)
-
-        self.control.update(layer)
+        self.control_layer.update(layer)
 
         for node in layer.get_node():
             node.set_continuation(node.get_control())
 
-        LayerOp.update_each_node(
+        layer.update_each_node(
             [PolicyOp(test=self.policy_test),
-             ValueOp(proxy=self.value_proxy)],
-            layer)
+             ValueOp(proxy=self.value_proxy)])
 
 
 class Rasmussen(PricingModel):
 
-    def __init__(self, control=None, regression=None):
+    def __init__(self, control_layer=None, regression_layer=None, value_proxy=None,
+                 policy_test=None):
+        super().__init__()
 
-        if control is None:
-            control = Control()
-        self.control = control
+        if control_layer is None:
+            def to_control(node):
+                return node.get_continuation()
 
-        if regression is None:
-            regression = Regression()
-        self.regression = control
+            def control_estimate(node):
+                stopped_node_list = node.get_stopped_node()
+                european_list = [Oracle.European().put_price(stopped_node) for stopped_node in stopped_node_list]
+                return np.average(european_list)
 
-        prototypical_layer = RasmussenLayer(control=self.control, regression=self.regression)
-        super().__init__(prototypical_layer)
+            def control_expected(node):
+                return Oracle.European().put_price(node)
 
-        self.name = self.name + "_" + prototypical_layer.get_name()
+            control_layer = Control(to_control=to_control,
+                                    control_estimate=control_estimate,
+                                    control_expected=control_expected)
+
+        if regression_layer is None:
+            get_source = "get_coord"
+            get_target = "get_continuation"
+            regression_model = Polynomial()
+            regression_layer = Regression(regression_model=regression_model,
+                                          get_source=get_source,
+                                          get_target=get_target)
+
+        if value_proxy is None:
+            def value_proxy(node):
+                return node.get_control()
+        if policy_test is None:
+            def policy_test(node):
+                return node.get_offer() > max(node.get_control(), Oracle.European().put_price(node))
+
+        self.control_layer = control_layer
+        self.regression_layer = regression_layer
+        self.value_proxy = value_proxy
+        self.policy_test = policy_test
+        self.option = None
+        self.name = self.name + "_" + self.regression_layer.get_name() + "_" + self.control_layer.get_name()
+
+    def train(self, data, option):
+
+        self.root = data.get_root()
+        self.layer_list = data.get_layer_list()
+        self.option = option
+
+        for layer in self.layer_list:
+            RasmussenLayerOp(control_layer=self.control_layer,
+                             regression_layer=self.regression_layer,
+                             value_proxy=self.value_proxy,
+                             policy_test=self.policy_test,
+                             option=self.option
+                             ).update(layer)
+
+    # TODO: Fix the plotting so we can se the names properly
+    def get_name(self):
+        return "Rasmussen"
