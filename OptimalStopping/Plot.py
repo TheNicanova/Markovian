@@ -1,14 +1,15 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pandas.core.frame import DataFrame
 
 
-class RidgePlot:
+class RidgePlot(DataFrame):
     @classmethod
     def plot(cls, dataframe):
-
         pal = sns.cubehelix_palette()
 
-        g = sns.FacetGrid(dataframe, row="Model Name", col="Number of Paths", hue="Model Name", margin_titles=True,  palette=pal)
+        g = sns.FacetGrid(dataframe, row="Model Name", col="Number of Paths", hue="Model Name", margin_titles=True,
+                          palette=pal)
 
         # Draw the densities in a few steps
         g.map(sns.kdeplot, "Price", bw_adjust=.5, clip_on=False, fill=True, alpha=1, linewidth=1.5)

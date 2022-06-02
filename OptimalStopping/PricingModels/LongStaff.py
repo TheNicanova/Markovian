@@ -12,19 +12,16 @@ class LongStaffLayerOp(LayerOp):
 
         self.regression_model = regression_model
 
-        def policy_test(node):
-            return node.get_offer() > node.get_regression()
-
         self.regression_model = regression_model
-        self.policy_test = policy_test
 
     def update(self, layer):
+        Regression(regression_model=self.regression_model, get_source="get_coord",
+                   get_target="get_continuation").update(layer)
 
-        layer.update_each_node([ContinuationOp()])
+        def policy_test(node):
+            return node.get_offer() > max(node.get_regression(), 0)
 
-        Regression(self.regression_model).update(layer)
-
-        layer.update_each_node([PolicyOp(test=self.policy_test), ValueOp()])
+        layer.update_each_node([PolicyOp(test=policy_test), ValueOp()])
 
 
 class LongStaff(PricingModel):
@@ -37,12 +34,11 @@ class LongStaff(PricingModel):
         self.name = self.name + "_" + self.regression_model.get_name()
 
     def train(self, data, option):
+
         self.root = data.get_root()
         self.layer_list = data.get_layer_list()
         self.option = option
 
         for layer in self.layer_list:
-            layer.update_each_node([OfferOp(option=self.option)])
+            layer.update_each_node([OfferOp(option=self.option), ContinuationOp()])
             LongStaffLayerOp(regression_model=self.regression_model).update(layer)
-
-

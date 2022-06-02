@@ -1,15 +1,17 @@
-import OptimalStopping as stop
-
 import pandas as pd
+import OptimalStopping as ops
+import copy
 
 
 # Todo: Make the default parameters a config
 
-def price(underlying_generator=None, option=Option.Put, model_list=None, n_list=[100], m=10):
+def price(underlying_generator=None, option=ops.Options.Put(), model_list=None, n_list=None, m=10):
+    if n_list is None:
+        n_list = [100]
     if underlying_generator is None:
-        underlying_generator = UnderlyingModel.GeometricBrownianMotion()
+        underlying_generator = ops.UnderlyingModels.GeometricBrownianMotion()
     if model_list is None:
-        model_list = [PricingModel.Basic()]
+        model_list = [ops.PricingModels.Basic()]
 
     result_dict = {
         "Model Name": [],
@@ -23,7 +25,7 @@ def price(underlying_generator=None, option=Option.Put, model_list=None, n_list=
         for n in n_list:
             data = underlying_generator.generate_paths(n=n)
             for model in model_list:
-                model.train(data, option)
+                model.train(copy.deepcopy(data), option)
                 root_price = model.get_root_value()
 
                 result_dict["Model Name"].append(model.get_name())

@@ -1,6 +1,7 @@
 import numpy as np
 
-import OptimalStopping.Utility as Utility
+from OptimalStopping.Utility.Regressions import Polynomial
+from OptimalStopping.Storage.Layer import Layer
 
 
 class LayerOp:
@@ -63,31 +64,35 @@ class Control(LayerOp):
 
 
 class Regression(LayerOp):
-    # TODO: Make Regressions layer independent of coord and continuation.
 
-    def __init__(self, regression_model=None, in_the_money_only=True):
+    def __init__(self, regression_model=None, get_source=None, get_target=None, in_the_money_only=True):
         if regression_model is None:
-            regression_model = Utility.Regression.Polynomial()
+            regression_model = Polynomial()
+
+        if get_source is None:
+            get_source = "get_coord"
+        if get_target is None:
+            get_target = "get_continuation"
+
         self.regression_model = regression_model
         self.in_the_money_only = in_the_money_only
+        self.get_source = get_source
+        self.get_target = get_target
 
     def get_name(self):
         return self.regression_model.get_name() + "_money=" + str(self.in_the_money_only)
 
     def update(self, layer):
 
+        node_list = layer.get_node()
         if self.in_the_money_only:
-            node_list = layer.get_node()
-            in_the_money_node_list = [node for node in node_list if node.get_offer() > 0]
-            coord_list = [node.get_coord() for node in in_the_money_node_list]
-            target_list = [node.get_continuation() for node in in_the_money_node_list]
+            node_list = [node for node in node_list if node.get_offer() > 0]
 
-        else:
-            coord_list = layer.get_coord()
-            target_list = layer.get_continuation()
+        source_list = [node.__getattribute__(self.get_source)() for node in node_list]
+        target_list = [node.__getattribute__(self.get_target)() for node in node_list]
 
-        if self.regression_model.can_fit(coord_list, target_list):
-            continuation_model = self.regression_model.fit(coord_list, target_list)
+        if self.regression_model.can_fit(source_list, target_list):
+            continuation_model = self.regression_model.fit(source_list, target_list)
             layer.set_regression_result(continuation_model)
             for node in layer.get_node():
                 continuation_model_evaluated = continuation_model(node.get_coord())

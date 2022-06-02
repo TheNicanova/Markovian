@@ -57,7 +57,6 @@ class Layer:
             for node_op in node_op_list:
                 node_op.update(node_data)
 
-
     # </Setters>
 
     # <Getters>

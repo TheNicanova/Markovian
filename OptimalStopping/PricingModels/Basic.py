@@ -2,15 +2,6 @@ from .Logic import *
 from .PricingModel import PricingModel
 
 
-class BasicLayer(LayerOp):
-
-    def update(self, layer):
-        layer.update_each_node([
-            ContinuationOp(),
-            PolicyOp(),
-            ValueOp()])
-
-
 class Basic(PricingModel):
 
     def train(self, data, option):
@@ -19,5 +10,8 @@ class Basic(PricingModel):
         self.option = option
 
         for layer in self.layer_list:
-            layer.update_each_node([OfferOp(option=self.option)])
-            BasicLayer().update(layer)
+            layer.update_each_node([
+                OfferOp(option=self.option),
+                ContinuationOp(),
+                PolicyOp(),
+                ValueOp()])
