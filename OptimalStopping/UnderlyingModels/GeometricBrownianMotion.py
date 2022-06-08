@@ -88,4 +88,4 @@ class GeometricBrownianMotion(UnderlyingModel):
 
         layer_list.reverse()
         layer_list = [Layer(node_list) for node_list in layer_list]
-        return Data(root, layer_list)
+        return Data(root, layer_list, schedule)

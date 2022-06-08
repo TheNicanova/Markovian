@@ -36,10 +36,8 @@ class LongStaff(PricingModel):
         self.option = None
 
     def train(self, data, option):
-
-        self.root = data.get_root()
-        self.layer_list = data.get_layer_list()
+        self.data = data
         self.option = option
 
-        for layer in self.layer_list:
+        for layer in self.data.get_layer_list():
             LongStaffLayerOp(regression_layer=self.regression_layer, option=self.option).update(layer)

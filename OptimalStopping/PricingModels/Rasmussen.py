@@ -2,6 +2,7 @@ from .PricingModel import *
 from .Logic import *
 from OptimalStopping.Utility.Regressions import Polynomial
 import OptimalStopping.Utility.Oracle as Oracle
+import numpy as np
 
 
 class RasmussenLayerOp(LayerOp):
@@ -73,11 +74,10 @@ class Rasmussen(PricingModel):
 
     def train(self, data, option):
 
-        self.root = data.get_root()
-        self.layer_list = data.get_layer_list()
+        self.data = data
         self.option = option
 
-        for layer in self.layer_list:
+        for layer in self.data.get_layer_list():
             RasmussenLayerOp(control_layer=self.control_layer,
                              regression_layer=self.regression_layer,
                              value_proxy=self.value_proxy,

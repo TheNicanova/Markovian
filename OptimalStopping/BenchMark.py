@@ -1,9 +1,16 @@
 import pandas as pd
+import OptimalStopping.Plot
 import OptimalStopping as ops
 import copy
 
 
 # Todo: Make the default parameters a config
+
+class BenchMarkResult(pd.DataFrame):
+
+    def plot(self):
+        OptimalStopping.Plot.plot_benchmark_result(self)
+
 
 def price(underlying_generator=None, option=ops.Options.Put(), model_list=None, n_list=None, m=10):
     if n_list is None:
@@ -26,7 +33,7 @@ def price(underlying_generator=None, option=ops.Options.Put(), model_list=None, 
             data = underlying_generator.generate_paths(n=n)
             for model in model_list:
                 model.train(copy.deepcopy(data), option)
-                root_price = model.get_root_value()
+                root_price = model.get_price()
 
                 result_dict["Model Name"].append(model.get_name())
                 result_dict["Price"].append(root_price)
@@ -34,4 +41,6 @@ def price(underlying_generator=None, option=ops.Options.Put(), model_list=None, 
                 result_dict["Batch"].append(batch)
                 result_dict["Options"].append(option.get_name())
 
-    return pd.DataFrame(result_dict)
+    return BenchMarkResult(pd.DataFrame(result_dict))
+
+

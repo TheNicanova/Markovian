@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+import OptimalStopping.Plot
 
 
 class Node:
@@ -134,36 +134,5 @@ class Node:
 
         # ******** <Observability> **********
 
-    def plot_child(self, ax=None):
-        if ax is None:
-            fig, ax = plt.subplots()
-
-        for child in self.get_children():
-            parent_state = self.get_state()
-            child_state = child.get_state()
-            ax.plot([parent_state.get_time(), child_state.get_time()],
-                    [parent_state.get_coord(), child_state.get_coord()])
-        return ax
-
     def plot(self):
-        self.plot_descendant()
-
-    def plot_descendant(self):
-        fig, ax = plt.subplots()
-        fig.supxlabel('Time')
-        fig.supylabel('Coordinates')
-        layer_list = self.bfs()
-        for list in layer_list:
-            for node in list:
-                node.plot_child(ax)
-
-    def recursive_plot(self, ax):
-        if self.get_children() is None:
-            pass
-        else:
-            ax = self.plot_child(ax)
-            for child in self.get_children():
-                if child.children_drawn is False:
-                    ax = child.recursive_plot(ax)
-                    child.children_drawn = True
-        return ax
+        OptimalStopping.Plot.plot_node_descendant(self)

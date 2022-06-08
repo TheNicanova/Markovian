@@ -17,9 +17,8 @@ class BasicLayerOp(LayerOp):
 class Basic(PricingModel):
 
     def train(self, data, option):
-        self.root = data.get_root()
-        self.layer_list = data.get_layer_list()
+        self.data = data
         self.option = option
 
-        for layer in self.layer_list:
+        for layer in self.data.get_layer_list():
             BasicLayerOp(option=self.option).update(layer)

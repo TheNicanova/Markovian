@@ -1,3 +1,6 @@
+import OptimalStopping.Plot
+
+
 class Layer:
 
     def __init__(self, arg):
@@ -63,3 +66,6 @@ class Layer:
     def get_regression_result(self):
         return self._regression_result
     # </Getters>
+
+    def plot(self):
+        OptimalStopping.Plot.plot_layer(self)

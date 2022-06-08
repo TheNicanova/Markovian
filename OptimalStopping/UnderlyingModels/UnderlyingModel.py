@@ -84,4 +84,4 @@ class UnderlyingModel:
         node_partition.reverse()
         layer_list = [Storage.Layer(node_list) for node_list in node_partition]
 
-        return Storage.Data(node, layer_list)
+        return Storage.Data(node, layer_list, schedule)
