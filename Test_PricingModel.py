@@ -1,17 +1,18 @@
-import OptimalStopping as ops
-import OptimalStopping.Utility.Schedule as Schedule
-
+import Utility.Schedule as Schedule
+import UnderlyingModels
+import PricingModels
+import Options
 
 # Generate Data
-underlying_generator = ops.UnderlyingModels.GeometricBrownianMotion(rate=0.0, sigma=0.2, dividend=None)
+underlying_generator = UnderlyingModels.GeometricBrownianMotion(rate=0.0, sigma=0.2, dividend=None)
 
 data = underlying_generator.generate_paths(schedule=Schedule.Linear(6), n=6)
 
 # Specify the option
-option = ops.Options.Put(1.1)
+option = Options.Put(1.1)
 
 # Specify the model
-model = ops.PricingModels.LongStaff()
+model = PricingModels.LongStaff()
 
 # Run the model on the data-option pair
 model.train(data, option)
