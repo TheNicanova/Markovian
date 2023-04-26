@@ -6,7 +6,7 @@ from .Option import Option
 
 class Call(Option):
     """
-  A call option
+  A call option.
   """
 
     def __init__(self, strike_price=None):

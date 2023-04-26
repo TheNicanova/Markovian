@@ -5,6 +5,8 @@ import BenchMark
 import Plot
 import Utility
 
+""" Something to be checked out"""
+
 result_frame = BenchMark.price(
     underlying_generator=UnderlyingModel.GeometricBrownianMotion(),
     option=Option.Put(),
@@ -14,3 +16,4 @@ result_frame = BenchMark.price(
 
 
 Plot.RidgePlot.plot(result_frame)
+
