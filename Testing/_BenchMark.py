@@ -1,4 +1,4 @@
-import UnderlyingModel
+import OptimalStopping.UnderlyingModel
 import Option
 from PricingModel import *
 import BenchMark

@@ -85,6 +85,5 @@ class Rasmussen(PricingModel):
                              option=self.option
                              ).update(layer)
 
-    # TODO: Fix the plotting so we can se the names properly
     def get_name(self):
         return "Rasmussen"

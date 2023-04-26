@@ -11,8 +11,13 @@ class UnderlyingModel:
 
   """
 
+    def __init__(self):
+        self.name = "No name given yet."
+        pass
+
     @classmethod
     def new_node(cls, state):
+        # TODO: Incorporate the likelihood
         return Storage.Node(state)
 
     @classmethod
@@ -22,10 +27,6 @@ class UnderlyingModel:
     @classmethod
     def get_default_schedule(cls):
         return Schedule.Linear()
-
-    def __init__(self):
-        self.name = "No name given yet."
-        pass
 
     def get_name(self):
         return self.name
@@ -65,7 +66,7 @@ class UnderlyingModel:
         return node
 
     def generate_paths(self, node=None, schedule=None, n=config.default["num_of_paths"]):
-
+        # TODO: Incorporate the likelihood to
         # Setting defaults
         if node is None: node = self.get_default_node()
         if schedule is None: schedule = self.get_default_schedule()

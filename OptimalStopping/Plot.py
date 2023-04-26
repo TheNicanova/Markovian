@@ -1,10 +1,13 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-import OptimalStopping.config as config
-from pandas.core.frame import DataFrame
 import math
 
+import OptimalStopping.config as config
+from pandas.core.frame import DataFrame
+
+
+# TODO : add a visualization for the control layer (a regression per layer)
 
 def plot_node_descendant(self):
     fig, ax = plt.subplots()
@@ -14,6 +17,9 @@ def plot_node_descendant(self):
 
     for layer in layer_list:
         for node in layer:
+            # Plotting the policy
+            if node.get_policy():
+                ax.scatter(node.get_time(), node.get_coord(), s=25, label="stopped", marker='H', c='red')
             plot_node_child(node, ax)
 
 
@@ -36,7 +42,7 @@ def plot_node_data(node, ax):
     ax.axvline(coord, linewidth=1, alpha=0.5, color='grey', linestyle='-')
 
     # Plotting the policy
-    if node.get_policy() is True:
+    if node.get_policy():
         ax.scatter(coord, -0.1, s=15, label="stopped", marker='H', c='red')
 
     # Plotting the continuation

@@ -1,6 +1,6 @@
 class State:
     """
-  The state object
+  The State object acts as storage for one underlying state.
 
   Attributes:
       time (float) : the total description of a situation includes the time.

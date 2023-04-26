@@ -1,12 +1,12 @@
-import _config
-import Utility.Regression.Regression as Interface
+import OptimalStopping.config as config
+from OptimalStopping.Utility.Regressions.Regression import Regression
 import numpy as np
 from sklearn.neighbors import KNeighborsRegressor
 
 
-class NearestNeighbors1D(Interface.Regression):
+class NearestNeighbors1D(Regression):
 
-    def __init__(self, param=_config.default["num_neighbor"]):
+    def __init__(self, param=config.default["num_neighbor"]):
         super().__init__(param)
         self.param = param
 
@@ -17,3 +17,6 @@ class NearestNeighbors1D(Interface.Regression):
 
     def can_fit(self, coord, targets):
         return len(coord) > self.param
+
+    def get_name(self):
+        return "kNN"

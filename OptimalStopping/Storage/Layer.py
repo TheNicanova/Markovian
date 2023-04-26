@@ -2,13 +2,24 @@ import OptimalStopping.Plot
 
 
 class Layer:
+    """
+    A Layer object is (1) a list of Node objects and (2) it serves as a warehouse for LayerOp
 
+    Attributes:
+        node_list : a list of Node object.
+        _regression_result.
+        _theta.
+    """
     def __init__(self, arg):
         self.node_list = arg
         self._regression_result = None
+        self._theta = None
 
     def get_node(self):
         return self.node_list
+
+    def get_theta(self):
+        return self._theta
 
     def get_layer_time(self):
         return self.get_node()[0].get_time()
@@ -52,6 +63,9 @@ class Layer:
         return european_list
 
     # <Setters>
+    def set_theta(self, arg):
+        self._theta = arg
+
     def set_regression_result(self, arg):
         self._regression_result = arg
 

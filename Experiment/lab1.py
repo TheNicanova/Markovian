@@ -10,7 +10,7 @@ result = benchmark.price(
         ops.PricingModels.LongStaff(),
         ops.PricingModels.Rasmussen()
     ],
-    n_list=[10, 20],
+    n_list=[10, 20, 100, 500],
     m=10
 )
 

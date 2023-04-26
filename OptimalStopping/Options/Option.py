@@ -12,7 +12,7 @@ class Option:
         pass
 
     def get_name(self):
-        return "Options"
+        return
 
     def payoff(self, time, coord):
         pass
